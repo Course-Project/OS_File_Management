@@ -1,0 +1,35 @@
+@charset "UTF-8";
+/**
+ * 
+ * @authors Tom Hu (webmaster@h1994st.com)
+ * @date    2014-05-31 22:07:10
+ * @version 1.0
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  color: #ffffff;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+textarea {
+  padding: 15px;
+  resize: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background-color: #000000;
+  border: none;
+  color: #ffffff;
+}
+textarea:focus {
+  outline: none;
+}
