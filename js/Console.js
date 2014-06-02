@@ -104,7 +104,7 @@
         Console.prototype.keyDown = function (sender, event) {
             // Handle Key 'Tab'
             if (event.keyCode == Console.KEY_TAB) {
-                return true;
+                event.preventDefault();
             };
 
             if (event.keyCode == Console.KEY_LEFT
@@ -112,7 +112,7 @@
                 || event.keyCode == Console.KEY_RIGHT
                 || event.keyCode == Console.KEY_DOWN) {
 
-                return false;
+                
             };
 
 
