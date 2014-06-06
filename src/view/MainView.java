@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -44,6 +46,22 @@ public class MainView extends JFrame {
 	// Constructor
 	public MainView() {
 		super();
+		
+		// initialize
+		this.contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		this.backButton = new JButton("Back");
+		this.addressTextField = new JTextField("test");
+		this.goButton = new JButton("Go");
+		this.searchTextField = new JTextField("search");
+		this.searchButton = new JButton("search");
+		
+		// UI Methods
+		this.configureMenuBar();
+		this.configureToolPanel();
+		this.configureContentScrollPane();
+		
+		// Main View
+		this.configureJFrame();
 	}
 	
 	// UI Method
@@ -53,6 +71,7 @@ public class MainView extends JFrame {
 		this.setResizable(false);// Can't change the size
 		this.setLocationRelativeTo(null);// Set the position of the window -
 											// Screen's Center
+		this.setBackground(Color.WHITE);
 	}
 	
 	private void configureMenuBar() {
@@ -118,28 +137,7 @@ public class MainView extends JFrame {
 		
 		
 		
-		// initialize backButton
-		this.backButton = new JButton("Back");
 		
-		
-		
-		// initialize addressTextField
-		this.addressTextField = new JTextField("test");
-		
-		
-		
-		// initialize goButton
-		this.goButton = new JButton("Go");
-		
-		
-		
-		// initialize searchTextField
-		this.searchTextField = new JTextField("search");
-		
-		
-		
-		// initialize searchButton
-		this.searchButton = new JButton("search");
 		
 		
 		// Add to toolPanel
@@ -154,8 +152,9 @@ public class MainView extends JFrame {
 	}
 	
 	private void configureContentScrollPane() {
-		// initialize contentPanel
-		this.contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		// Set background color
+		this.contentPanel.setBackground(Color.WHITE);
 		
 		// Add component listener for contentPanel
 		this.contentPanel.addComponentListener(new ComponentListener() {
@@ -163,7 +162,6 @@ public class MainView extends JFrame {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("resized");
 				
 				Dimension d = MainView.this.contentPanel.getPreferredSize();
 				int con = MainView.this.contentPanel.getComponents().length;
@@ -178,28 +176,27 @@ public class MainView extends JFrame {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("moved");
 			}
 
 			@Override
 			public void componentShown(ComponentEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("shown");
 			}
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("hidden");
 			}
 		});
 		
 		// For test
 		for (int i = 0; i < 60; i++ ) {
-			FileIconPanel t = new FileIconPanel(FILE_TYPE.FILE);
+			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.FILE, "qwerwqerw");
 			
 			this.contentPanel.add(t);
 		}
+		
+		this.contentPanel.add(new DocumentIconPanel(FILE_TYPE.DIRECTORY, "wqerytrqrhgfh"));
 		
 		// initialize content scroll pane
 		JScrollPane contentScrollPane = new JScrollPane(this.contentPanel);
@@ -209,18 +206,29 @@ public class MainView extends JFrame {
 		this.add(contentScrollPane, BorderLayout.CENTER);
 	}
 	
+	// Show view
 	public void showView() {
-		// UI Methods
-		this.configureMenuBar();
-		this.configureToolPanel();
-		this.configureContentScrollPane();
 		
-		// Main View
-		this.configureJFrame();
 		
 		// Show View
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	// Actions
+	public void addDocument() {
+		
+	}
+	
+	public void addRightClickListener(MouseListener rightClickListener) {
+		this.contentPanel.addMouseListener(rightClickListener);
+	}
+	
+	public void addDocumentIconPanelMouseListener(MouseListener documentIconPanelMouseListener) {
+		System.out.println("document listener");
+		for (Component item : this.contentPanel.getComponents()) {
+			((DocumentIconPanel)item).addMouseListener(documentIconPanelMouseListener);
+		}
 	}
 
 }
