@@ -3,8 +3,11 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
@@ -18,6 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+
+import view.Config.FILE_TYPE;
 
 // TODO - layout views
 public class MainView extends JFrame {
@@ -43,7 +49,7 @@ public class MainView extends JFrame {
 	// UI Method
 	private void configureJFrame() {
 		this.setTitle("File System Simulator");// Set title
-		this.setSize(800, 600);// Set size of window
+		this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT);// Set size of window
 		this.setResizable(false);// Can't change the size
 		this.setLocationRelativeTo(null);// Set the position of the window -
 											// Screen's Center
@@ -148,21 +154,71 @@ public class MainView extends JFrame {
 	}
 	
 	private void configureContentScrollPane() {
-		this.contentPanel = new JPanel();
+		// initialize contentPanel
+		this.contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
+		// Add component listener for contentPanel
+		this.contentPanel.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("resized");
+				
+				Dimension d = MainView.this.contentPanel.getPreferredSize();
+				int con = MainView.this.contentPanel.getComponents().length;
+				int col = Config.WINDOW_WIDTH / (Config.FILE_ICON_PANEL_SIZE + 5);
+				int row = con / col + 1;
+				int newHeight = row * (Config.FILE_ICON_PANEL_SIZE + 5) + 5;
+				d.height = newHeight;
+				d.width = Config.WINDOW_WIDTH;
+				MainView.this.contentPanel.setPreferredSize(d);
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("moved");
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("shown");
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("hidden");
+			}
+		});
+		
+		// For test
+		for (int i = 0; i < 60; i++ ) {
+			FileIconPanel t = new FileIconPanel(FILE_TYPE.FILE);
+			
+			this.contentPanel.add(t);
+		}
+		
+		// initialize content scroll pane
 		JScrollPane contentScrollPane = new JScrollPane(this.contentPanel);
-		
+		contentScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		// Add to mainView
 		this.add(contentScrollPane, BorderLayout.CENTER);
 	}
 	
 	public void showView() {
+		// UI Methods
 		this.configureMenuBar();
 		this.configureToolPanel();
 		this.configureContentScrollPane();
+		
+		// Main View
 		this.configureJFrame();
 		
+		// Show View
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
