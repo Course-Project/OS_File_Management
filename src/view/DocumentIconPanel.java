@@ -32,7 +32,7 @@ public class DocumentIconPanel extends JPanel {
 
 		// Set layout
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		
+
 		// Set background color
 		this.setBackground(Color.WHITE);
 
@@ -72,14 +72,14 @@ public class DocumentIconPanel extends JPanel {
 		// Add to fileIconPanel
 		this.add(this.mainLabel);
 	}
-	
+
 	public void setSelected(boolean selected) {
 		if (selected) {
 			this.setBackground(Color.BLUE);
 			this.mainLabel.setForeground(Color.WHITE);
 		} else {
 			this.setBackground(Color.WHITE);
-			this.mainLabel.setForeground(Color.WHITE);
+			this.mainLabel.setForeground(Color.BLACK);
 		}
 	}
 

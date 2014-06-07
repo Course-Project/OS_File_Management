@@ -34,19 +34,18 @@ public class MainView extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 6313156717813295316L;
-	
+
 	public JButton backButton;
 	public JTextField addressTextField;
 	public JButton goButton;
 	public JTextField searchTextField;
 	public JButton searchButton;
 	public JPanel contentPanel;
-	
-	
+
 	// Constructor
 	public MainView() {
 		super();
-		
+
 		// initialize
 		this.contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		this.backButton = new JButton("Back");
@@ -54,26 +53,27 @@ public class MainView extends JFrame {
 		this.goButton = new JButton("Go");
 		this.searchTextField = new JTextField("search");
 		this.searchButton = new JButton("search");
-		
+
 		// UI Methods
 		this.configureMenuBar();
 		this.configureToolPanel();
 		this.configureContentScrollPane();
-		
+
 		// Main View
 		this.configureJFrame();
 	}
-	
+
 	// UI Method
 	private void configureJFrame() {
 		this.setTitle("File System Simulator");// Set title
-		this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT);// Set size of window
+		this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT);// Set size of
+																// window
 		this.setResizable(false);// Can't change the size
 		this.setLocationRelativeTo(null);// Set the position of the window -
 											// Screen's Center
 		this.setBackground(Color.WHITE);
 	}
-	
+
 	private void configureMenuBar() {
 		// Components
 		JMenuBar menuBar;
@@ -123,49 +123,45 @@ public class MainView extends JFrame {
 		// Add Components
 		this.setJMenuBar(menuBar);
 	}
-	
+
 	private void configureToolPanel() {
 		// initialize toolPanel
 		JPanel toolPanel = new JPanel();
-		
+
 		// for debug
 		toolPanel.setBackground(Color.BLACK);
-		
+
 		// Set Layout
 		toolPanel.setLayout(new BoxLayout(toolPanel, BoxLayout.X_AXIS));
 		toolPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-		
-		
-		
-		
-		
-		
+
 		// Add to toolPanel
 		toolPanel.add(this.backButton);
 		toolPanel.add(this.addressTextField);
 		toolPanel.add(this.goButton);
 		toolPanel.add(this.searchTextField);
 		toolPanel.add(this.searchButton);
-		
+
 		// Add to mainView
 		this.add(toolPanel, BorderLayout.PAGE_START);
 	}
-	
+
 	private void configureContentScrollPane() {
-		
+
 		// Set background color
 		this.contentPanel.setBackground(Color.WHITE);
-		
+
 		// Add component listener for contentPanel
 		this.contentPanel.addComponentListener(new ComponentListener() {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
 				// TODO Auto-generated method stub
-				
+
 				Dimension d = MainView.this.contentPanel.getPreferredSize();
 				int con = MainView.this.contentPanel.getComponents().length;
-				int col = Config.WINDOW_WIDTH / (Config.FILE_ICON_PANEL_SIZE + 5);
+				int col = Config.WINDOW_WIDTH
+						/ (Config.FILE_ICON_PANEL_SIZE + 5);
 				int row = con / col + 1;
 				int newHeight = row * (Config.FILE_ICON_PANEL_SIZE + 5) + 5;
 				d.height = newHeight;
@@ -188,46 +184,58 @@ public class MainView extends JFrame {
 				// TODO Auto-generated method stub
 			}
 		});
-		
+
 		// For test
-		for (int i = 0; i < 60; i++ ) {
-			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.FILE, "qwerwqerw");
-			
+		for (int i = 0; i < 10; i++) {
+			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.FILE,
+					"qwerwqerw");
+
 			this.contentPanel.add(t);
 		}
-		
-		this.contentPanel.add(new DocumentIconPanel(FILE_TYPE.DIRECTORY, "wqerytrqrhgfh"));
-		
+
+		this.contentPanel.add(new DocumentIconPanel(FILE_TYPE.DIRECTORY,
+				"wqerytrqrhgfh"));
+
 		// initialize content scroll pane
 		JScrollPane contentScrollPane = new JScrollPane(this.contentPanel);
-		contentScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
+		contentScrollPane
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
 		// Add to mainView
 		this.add(contentScrollPane, BorderLayout.CENTER);
 	}
-	
+
 	// Show view
 	public void showView() {
-		
-		
+
 		// Show View
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	// Actions
-	public void addDocument() {
-		
+	public void addDocument(DocumentIconPanel documentIconPanel) {
+		// For test
+		this.contentPanel.add(documentIconPanel);
+		this.contentPanel.validate();
 	}
-	
+
 	public void addRightClickListener(MouseListener rightClickListener) {
 		this.contentPanel.addMouseListener(rightClickListener);
 	}
-	
-	public void addDocumentIconPanelMouseListener(MouseListener documentIconPanelMouseListener) {
+
+	public void addDocumentIconPanelMouseListener(
+			MouseListener documentIconPanelMouseListener) {
 		System.out.println("document listener");
 		for (Component item : this.contentPanel.getComponents()) {
-			((DocumentIconPanel)item).addMouseListener(documentIconPanelMouseListener);
+			((DocumentIconPanel) item)
+					.addMouseListener(documentIconPanelMouseListener);
+		}
+	}
+
+	public void deselectDocuments() {
+		for (Component item : this.contentPanel.getComponents()) {
+			((DocumentIconPanel) item).setSelected(false);
 		}
 	}
 
