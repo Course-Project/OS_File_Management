@@ -1,5 +1,7 @@
 package model.sys;
 
+import java.nio.charset.Charset;
+
 public class Config {
 	
 	public static final int BLOCK_SIZE = 512;
@@ -9,4 +11,6 @@ public class Config {
 		FILE,
 		DIRECTORY
 	};
+	
+	public static final Charset CHARSET = Charset.forName("UTF-8");
 }
