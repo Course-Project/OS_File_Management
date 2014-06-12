@@ -1,12 +1,18 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import model.sys.Config;
+import model.sys.FCB;
+
+
+/**
+ * 
+ * @author Tom Hu
+ * 
+ */
 public class Main {
 
 	/**
@@ -14,51 +20,64 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		MainController mainController = new MainController();
-//		mainController.showMainView();
-//		
-//		File fileA = new File("asdf");
-//		fileA.save("qwerwqersdfas");
-//		
-//		Directory dirA = new Directory("new folder");
-//		dirA.addDocument(fileA);
-//		
-//		File fileB = new File("qrewreqwt");
-//		fileB.save("qewrewrqew\ndsfdsfewrq");
-//		
-//		dirA.addDocument(fileB);
-//		
-//		fileA.save("1231231231231231231212312312312");
-//		
-//		System.out.println(fileA.getSize());
-//		System.out.println(fileB.getSize());
-//		System.out.println(dirA.getSize());
+		// MainController mainController = new MainController();
+		// mainController.showMainView();
 		
-		ByteBuffer b = ByteBuffer.allocate(8);
-		ByteBuffer c = ByteBuffer.allocate(8);
+		FCB test = new FCB("testtest", null, Config.FILE_TYPE.FILE, 3);
 		
-		b.put("asrrdf".getBytes(Charset.forName("UTF-8")));
+		System.out.println("Address: " + test.address);
+        System.out.println("Filename: " + test.filename);
+        System.out.println("Size: " + test.size);
+        System.out.println("Created: " + test.createdDate);
+        System.out.println("Updated: " + test.updatedDate);
 		
-//		System.out.println(new String(b.array(), Charset.forName("UTF-8")));
-		
-		try {
-			File file = new File("/Users/tomhu/Desktop/1.bin");
-//			FileChannel fc = new FileOutputStream(file).getChannel();
-//			fc.write(b);
-//			fc.close();
-			
-			FileChannel fwc = new FileInputStream(file).getChannel();
-			fwc.read(c);
-			fwc.close();
-			String d = new String(c.array(), Charset.forName("UTF-8"));
-			System.out.println(d);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		byte[] bytes = null;
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(test);
+            oos.flush();
+            bytes = bos.toByteArray();
+            oos.close();
+            bos.close();
+        } catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+        System.out.println(bytes);
+        
+        Object obj = null;
+        ByteArrayInputStream bis = null;
+        ObjectInputStream ois = null;
+        try {
+            bis = new ByteArrayInputStream(bytes);
+            ois = new ObjectInputStream(bis);
+            obj = ois.readObject();
+            bis.close();
+            ois.close();
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        System.out.println(obj.getClass());
+        
+        FCB o = (FCB) obj;
+        
+        System.out.println("Address: " + o.address);
+        System.out.println("Filename: " + o.filename);
+        System.out.println("Size: " + o.size);
+        System.out.println("Created: " + o.createdDate);
+        System.out.println("Updated: " + o.updatedDate);
+
+
+
 	}
 
 }

@@ -22,17 +22,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import view.Config.FILE_TYPE;
 
 // TODO - layout views
+/**
+ * 
+ * @author Tom Hu
+ *
+ */
 public class MainView extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6313156717813295316L;
 
 	public JButton backButton;
@@ -156,6 +159,8 @@ public class MainView extends JFrame {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
+				System.out.println("resize");
+
 				// TODO Auto-generated method stub
 
 				Dimension d = MainView.this.contentPanel.getPreferredSize();
@@ -167,6 +172,7 @@ public class MainView extends JFrame {
 				d.height = newHeight;
 				d.width = Config.WINDOW_WIDTH;
 				MainView.this.contentPanel.setPreferredSize(d);
+
 			}
 
 			@Override
@@ -186,27 +192,58 @@ public class MainView extends JFrame {
 		});
 
 		// For test
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 60; i++) {
 			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.FILE,
 					"qwerwqerw");
 
+			System.out.println("Before adding: " + this.contentPanel.getSize());
+			System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
+
 			this.contentPanel.add(t);
+//			this.contentPanel.setSize(this.contentPanel.getPreferredSize());
+			
+			System.out.println("After adding: " + this.contentPanel.getSize());
+			System.out.println("After adding: " + this.contentPanel.getPreferredSize());
 		}
+
+		for (int i = 0; i < 60; i++) {
+			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.DIRECTORY,
+					"qwerwqerw");
+
+			System.out.println("Before adding: " + this.contentPanel.getSize());
+			System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
+
+			this.contentPanel.add(t);
+//			this.contentPanel.setSize(this.contentPanel.getPreferredSize());
+			
+			System.out.println("After adding: " + this.contentPanel.getSize());
+			System.out.println("After adding: " + this.contentPanel.getPreferredSize());
+		}
+
+		System.out.println("Before adding: " + this.contentPanel.getSize());
+		System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
 
 		this.contentPanel.add(new DocumentIconPanel(FILE_TYPE.DIRECTORY,
 				"wqerytrqrhgfh"));
+//		this.contentPanel.setSize(this.contentPanel.getPreferredSize());
+		
+		System.out.println("After adding: " + this.contentPanel.getSize());
+		System.out.println("After adding: " + this.contentPanel.getPreferredSize());
 
 		// initialize content scroll pane
+		System.out.println("initialize contentScrollPane");
 		JScrollPane contentScrollPane = new JScrollPane(this.contentPanel);
 		contentScrollPane
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		// Add to mainView
+		System.out.println("add to mainView");
 		this.add(contentScrollPane, BorderLayout.CENTER);
 	}
 
 	// Show view
 	public void showView() {
+		System.out.println("show view");
 
 		// Show View
 		this.setVisible(true);
@@ -226,7 +263,7 @@ public class MainView extends JFrame {
 
 	public void addDocumentIconPanelMouseListener(
 			MouseListener documentIconPanelMouseListener) {
-		System.out.println("document listener");
+		System.out.println("add document listener");
 		for (Component item : this.contentPanel.getComponents()) {
 			((DocumentIconPanel) item)
 					.addMouseListener(documentIconPanelMouseListener);

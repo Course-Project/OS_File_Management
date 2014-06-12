@@ -14,7 +14,11 @@ import view.Config.FILE_TYPE;
 import view.DocumentIconPanel;
 import view.MainView;
 
-// TODO - add event listener
+/**
+ * 
+ * @author Tom Hu
+ *
+ */
 public class MainController {
 
 	private MainView view;
