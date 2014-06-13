@@ -47,7 +47,7 @@ local.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
 
@@ -56,3 +56,7 @@ hs_err_pid*
 
 # Mac OS Icon File
 *.icns
+
+# local virtual disk data
+disk/
+*.bin

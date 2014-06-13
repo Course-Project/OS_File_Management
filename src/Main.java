@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 
+import com.google.gson.Gson;
+
 import model.sys.Config;
 import model.sys.FCB;
 import model.sys.IO;
@@ -82,9 +84,30 @@ public class Main {
         System.out.println("Size: " + o.size);
         System.out.println("Created: " + o.createdDate);
         System.out.println("Updated: " + o.updatedDate);
-
-        IO io = new IO();
-        io.init();
+        
+        Gson gson = new Gson();
+        
+        String json = gson.toJson(o);
+        
+        System.out.println(json);
+        
+        ByteBuffer bbb = ByteBuffer.allocate(512);
+        bbb.put(json.getBytes());
+        
+        System.out.println(bbb);
+        
+        FCB y = gson.fromJson(json, FCB.class);
+        
+        System.out.println(y);
+        
+        System.out.println("Address: " + y.address);
+        System.out.println("Filename: " + y.filename);
+        System.out.println("Size: " + y.size);
+        System.out.println("Created: " + y.createdDate);
+        System.out.println("Updated: " + y.updatedDate);
+        
+//        IO io = new IO();
+//        io.init();
 
 	}
 

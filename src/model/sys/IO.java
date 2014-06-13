@@ -29,6 +29,7 @@ public class IO {
 			block.sync();
 		}
 		
+		// 写回物理磁盘
 		this.update();
 		System.out.println("系统初始化完成");
 	}
