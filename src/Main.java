@@ -1,11 +1,3 @@
-import com.google.gson.Gson;
-
-import model.sys.Config;
-import model.sys.FCB;
-import controller.IO;
-
-
-
 
 /**
  * 
@@ -22,23 +14,15 @@ public class Main {
 		// MainController mainController = new MainController();
 		// mainController.showMainView();
 
-		FCB t = new FCB("fileneenenene", 0, Config.FILE_TYPE.DIRECTORY, 10);
+		byte test = 0;
+		test |= (1 << 7);
+		test |= (1 << 0);
 		
-		Gson gson = new Gson();
+		System.out.println(test);
 		
-		String json = gson.toJson(t);
+		test &= (~(1 << 7));
 		
-		IO io = new IO();
-		io.init();
-		io.write(0, 1, json);
-		
-		String o = io.read(0, 1);
-		System.out.println(o.length());
-		
-		FCB u = gson.fromJson(o, FCB.class);
-		
-		System.out.println(u);
-//		io.update();
+		System.out.println(test);
 
 	}
 

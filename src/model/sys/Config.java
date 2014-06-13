@@ -13,6 +13,8 @@ public class Config {
 	public static final int BLOCK_SIZE = 512;
 	public static final int BLOCK_COUNT = 8000;
 	
+	public static final int SYS_BLOCK_COUNT = 256;
+	
 	public static final int FILE_MAX_BLOCKS = 10;
 	
 	public static enum FILE_TYPE {
