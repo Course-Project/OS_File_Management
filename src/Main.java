@@ -1,3 +1,10 @@
+import java.util.Vector;
+
+import com.google.gson.Gson;
+
+import model.sys.FCB;
+import controller.SystemCore;
+
 
 /**
  * 
@@ -13,16 +20,21 @@ public class Main {
 		// TODO Auto-generated method stub
 		// MainController mainController = new MainController();
 		// mainController.showMainView();
-
-		byte test = 0;
-		test |= (1 << 7);
-		test |= (1 << 0);
 		
-		System.out.println(test);
+		SystemCore core = new SystemCore();
 		
-		test &= (~(1 << 7));
+		FCB t = new FCB(null, 0, null, 0, 0, 0);
 		
-		System.out.println(test);
+		FCB[] test = new FCB[10];
+		test[0] = t;
+		
+		Gson gson = new Gson();
+		
+		String json = gson.toJson(test);
+		
+		FCB[] d = gson.fromJson(json, FCB[].class);
+		
+		System.out.println(d[0]);
 
 	}
 

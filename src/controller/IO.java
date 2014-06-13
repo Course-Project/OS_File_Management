@@ -29,9 +29,9 @@ public class IO {
 		}
 
 		System.out.println("系统开始初始化");
-		File rootDir = new File("disk");
-		if (!rootDir.exists()) {
-			rootDir.mkdirs();
+		File diskDir = new File("disk");
+		if (!diskDir.exists()) {
+			diskDir.mkdirs();
 		}
 
 		// 初始化物理块
@@ -56,13 +56,15 @@ public class IO {
 		// 根目录FCB，放在2号块，占一个块
 		// 根目录目录文件，放在256号块
 		System.out.println("初始化根目录");
-		FCB rootDirFCB = new FCB("root", -1, Config.FILE_TYPE.DIRECTORY, 1,
-				Config.SYS_BLOCK_COUNT);
-		String rootDirFCBJSON = gson.toJson(rootDirFCB);
-		this.write(2, 1, rootDirFCBJSON);
+		FCB[] rootDir = new FCB[40];
+		String rootDirJSON = gson.toJson(rootDir);
 
-		byte[] dirMap = new byte[Config.SYS_BLOCK_COUNT / 8];
-		this.write(Config.SYS_BLOCK_COUNT, dirMap.length / 512 + 1, dirMap);
+		FCB rootDirFCB = new FCB("root", -1, Config.FILE_TYPE.DIRECTORY,
+				rootDirJSON.length() / 512 + 1, Config.SYS_BLOCK_COUNT, 2);
+		String rootDirFCBJSON = gson.toJson(rootDirFCB);
+		
+		this.write(rootDirFCB.blockId, 1, rootDirFCBJSON);
+		this.write(Config.SYS_BLOCK_COUNT, rootDirFCB.size, rootDirJSON);
 
 		// 保存位图
 		this.write(0, bitMap.length / 512 + 1, bitMap);
@@ -95,23 +97,25 @@ public class IO {
 	 */
 	public ByteBuffer read(int startBlockId, int length) {
 		ByteBuffer resultBuffer = ByteBuffer.allocate(0);
-		
+
 		for (int i = startBlockId; i < startBlockId + length; i++) {
 			ByteBuffer currentBinDataBuffer = this.blocks.get(i).getBinData();
 			byte[] temp = resultBuffer.array();
 			resultBuffer.rewind();
 			resultBuffer.get(temp, 0, temp.length);
-			
+
 			// resize
-			resultBuffer = ByteBuffer.allocate(temp.length + currentBinDataBuffer.limit());
-			
+			resultBuffer = ByteBuffer.allocate(temp.length
+					+ currentBinDataBuffer.limit());
+
 			// put back
 			resultBuffer.put(temp, 0, temp.length);
-			
+
 			// append
-			resultBuffer.put(currentBinDataBuffer.array(), 0, currentBinDataBuffer.limit());
+			resultBuffer.put(currentBinDataBuffer.array(), 0,
+					currentBinDataBuffer.limit());
 		}
-		
+
 		resultBuffer.rewind();
 		return resultBuffer;
 	}

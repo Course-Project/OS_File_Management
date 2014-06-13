@@ -21,15 +21,18 @@ public class FCB implements Serializable {
 	public Date updatedDate;
 	public int fatherBlockId; //指向上一级FCB
 	public int size; // 当前文件控制块所对应的数据区块个数
-	public int dataStartBlockId;
+	public int dataStartBlockId; //数据区Block的id
+	public int blockId;
 
 	// Constructor
-	public FCB(String filename, int fatherBlockId, FILE_TYPE type, int size, int dataStartBlockId) {
+	public FCB(String filename, int fatherBlockId, FILE_TYPE type, int size, int dataStartBlockId, int blockId) {
 		this.filename = filename;
 		this.fatherBlockId = fatherBlockId;
 		this.type = type;
 		this.size = size;
 		this.createdDate = new Date();
 		this.updatedDate = (Date) this.createdDate.clone();
+		this.dataStartBlockId = dataStartBlockId;
+		this.blockId = blockId;
 	}
 }

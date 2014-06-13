@@ -1,11 +1,14 @@
 package controller;
 
+import java.nio.ByteBuffer;
+
 import model.sys.Config;
+import model.sys.FCB;
 
 public class DiskManager {
 	
 	private byte[] bitMap;
-	private IO io;
+	public IO io;
 	private boolean online;
 
 	/**
@@ -70,6 +73,53 @@ public class DiskManager {
 		this.updateBitMap();
 	}
 	
+	/**
+	 * 所有数据写回磁盘
+	 */
+	public void update() {
+		this.io.update();
+	}
 	
+	/**
+	 * 搜索连续长度为length的空闲块
+	 * @param length 所请求的空闲块链的长度
+	 * @return 空闲块链起点
+	 */
+	public int getFreeSpace(int length) {
+		return this.getFreeSpace(length, 256);
+	}
+	
+	/**
+	 * 从startBlockId开始，搜索连续长度为length的空闲块链
+	 * @param length 所请求的空闲块链的长度
+	 * @param startBlockId 搜索的起点
+	 * @return 空闲块起点
+	 */
+	public int getFreeSpace(int length, int startBlockId) {
+		startBlockId = Math.max(Config.SYS_BLOCK_COUNT, startBlockId);
+		int max = this.bitMap.length;
+		
+		for (int i = startBlockId; i < max; ) {
+			int j = i;
+			while (j < max && (this.bitMap[j / 8] & (byte) (1 << (j % 8))) == 0) {
+				j++;
+			}
+			if (j - i >= length) {
+				return i;
+			}
+			i = j + 1;
+		}
+		return 0;
+	}
+	
+	/**
+	 * 根据FCB来获取文件内容
+	 * @param fcb
+	 * @return
+	 */
+	public String readFile(FCB fcb) {
+		ByteBuffer resultBuffer = this.io.read(fcb.dataStartBlockId, fcb.size);
+		return new String(resultBuffer.array(), Config.CHARSET);
+	}
 
 }
