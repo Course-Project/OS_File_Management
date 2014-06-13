@@ -37,7 +37,7 @@ public class Block {
 	 * 将该块内容清空
 	 */
 	public void wipe() {
-		this.binData.clear();
+		this.binData.clear(); //并未真正清空数据，只是重置了标记
 	}
 
 	/**

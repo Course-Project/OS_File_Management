@@ -1,15 +1,10 @@
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
-
 import com.google.gson.Gson;
 
 import model.sys.Config;
 import model.sys.FCB;
-import model.sys.IO;
+import controller.IO;
+
+
 
 
 /**
@@ -27,87 +22,23 @@ public class Main {
 		// MainController mainController = new MainController();
 		// mainController.showMainView();
 
-		FCB test = new FCB("testtesdsfdsfsdfsadt", 0, Config.FILE_TYPE.FILE, 3);
+		FCB t = new FCB("fileneenenene", 0, Config.FILE_TYPE.DIRECTORY, 10);
 		
-		System.out.println("Address: " + test.address);
-        System.out.println("Filename: " + test.filename);
-        System.out.println("Size: " + test.size);
-        System.out.println("Created: " + test.createdDate);
-        System.out.println("Updated: " + test.updatedDate);
+		Gson gson = new Gson();
 		
-		byte[] bytes = null;
-        ByteArrayOutputStream bos = null;
-        ObjectOutputStream oos = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(bos);
-            oos.writeObject(test);
-            oos.flush();
-            bytes = bos.toByteArray();
-            oos.close();
-            bos.close();
-        } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        System.out.println(bytes);
-        
-        ByteBuffer bb = ByteBuffer.allocate(512);
-        bb.put(bytes);
-        
-        System.out.println("ByteBuffer: " + bb);
-        
-        Object obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
-        try {
-            bis = new ByteArrayInputStream(bytes);
-            ois = new ObjectInputStream(bis);
-            obj = ois.readObject();
-            bis.close();
-            ois.close();
-        } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        System.out.println(obj.getClass());
-        
-        FCB o = (FCB) obj;
-        
-        System.out.println("Address: " + o.address);
-        System.out.println("Filename: " + o.filename);
-        System.out.println("Size: " + o.size);
-        System.out.println("Created: " + o.createdDate);
-        System.out.println("Updated: " + o.updatedDate);
-        
-        Gson gson = new Gson();
-        
-        String json = gson.toJson(o);
-        
-        System.out.println(json);
-        
-        ByteBuffer bbb = ByteBuffer.allocate(512);
-        bbb.put(json.getBytes());
-        
-        System.out.println(bbb);
-        
-        FCB y = gson.fromJson(json, FCB.class);
-        
-        System.out.println(y);
-        
-        System.out.println("Address: " + y.address);
-        System.out.println("Filename: " + y.filename);
-        System.out.println("Size: " + y.size);
-        System.out.println("Created: " + y.createdDate);
-        System.out.println("Updated: " + y.updatedDate);
-        
-//        IO io = new IO();
-//        io.init();
+		String json = gson.toJson(t);
+		
+		IO io = new IO();
+		io.init();
+		io.write(0, 1, json);
+		
+		String o = io.read(0, 1);
+		System.out.println(o.length());
+		
+		FCB u = gson.fromJson(o, FCB.class);
+		
+		System.out.println(u);
+//		io.update();
 
 	}
 
