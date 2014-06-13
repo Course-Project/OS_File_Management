@@ -1,5 +1,6 @@
 package model.sys;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,9 +44,15 @@ public class Block {
 	 * 从物理磁盘上读入该块的内容，存入binData
 	 */
 	public void sync() {
+		File binFile = new File(this.filePath);
+		if (!binFile.exists()) {
+//			System.out.println("Warning: \"" + this.filePath + "\" not found");
+			return;
+		}
+		
 		FileChannel inputChannel;
 		try {
-			inputChannel = new FileInputStream(this.filePath).getChannel();
+			inputChannel = new FileInputStream(binFile).getChannel();
 			inputChannel.read(this.binData);
 			inputChannel.close();
 		} catch (FileNotFoundException e) {
@@ -61,9 +68,11 @@ public class Block {
 	 * 将binData数据写回物理磁盘
 	 */
 	public void update() {
+		File binFile = new File(this.filePath);
+		
 		FileChannel outputChannel;
 		try {
-			outputChannel = new FileOutputStream(this.filePath).getChannel();
+			outputChannel = new FileOutputStream(binFile).getChannel();
 			this.binData.flip();
 			outputChannel.write(this.binData);
 			outputChannel.close();
@@ -74,5 +83,12 @@ public class Block {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 获取当前块数据
+	 */
+	public ByteBuffer getBinData() {
+		return this.binData;
 	}
 }

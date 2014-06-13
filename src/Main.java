@@ -3,9 +3,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 import model.sys.Config;
 import model.sys.FCB;
+import model.sys.IO;
 
 
 /**
@@ -22,8 +24,8 @@ public class Main {
 		// TODO Auto-generated method stub
 		// MainController mainController = new MainController();
 		// mainController.showMainView();
-		
-		FCB test = new FCB("testtest", null, Config.FILE_TYPE.FILE, 3);
+
+		FCB test = new FCB("testtesdsfdsfsdfsadt", 0, Config.FILE_TYPE.FILE, 3);
 		
 		System.out.println("Address: " + test.address);
         System.out.println("Filename: " + test.filename);
@@ -48,6 +50,11 @@ public class Main {
 		}
         
         System.out.println(bytes);
+        
+        ByteBuffer bb = ByteBuffer.allocate(512);
+        bb.put(bytes);
+        
+        System.out.println("ByteBuffer: " + bb);
         
         Object obj = null;
         ByteArrayInputStream bis = null;
@@ -76,7 +83,8 @@ public class Main {
         System.out.println("Created: " + o.createdDate);
         System.out.println("Updated: " + o.updatedDate);
 
-
+        IO io = new IO();
+        io.init();
 
 	}
 
