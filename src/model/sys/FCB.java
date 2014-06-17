@@ -22,7 +22,7 @@ public class FCB implements Serializable {
 	public int fatherBlockId; //指向上一级FCB
 	public int size; // 当前文件控制块所对应的数据区块个数
 	public int dataStartBlockId; //数据区Block的id
-	public int blockId;
+	public int blockId; // 当前FCB所在Block的id
 
 	// Constructor
 	public FCB(String filename, int fatherBlockId, FILE_TYPE type, int size, int dataStartBlockId, int blockId) {

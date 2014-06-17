@@ -30,7 +30,9 @@ public class IO {
 
 		System.out.println("系统开始初始化");
 		File diskDir = new File("disk");
-		if (!diskDir.exists()) {
+		boolean diskDirExists = diskDir.exists();
+		if (!diskDirExists) {
+			System.out.println("物理磁盘上模拟信息不存在");
 			diskDir.mkdirs();
 		}
 
@@ -38,12 +40,12 @@ public class IO {
 		System.out.println("初始化物理块");
 		for (int i = 0; i < Config.BLOCK_COUNT; i++) {
 			Block block = new Block(i);
-			this.blocks.add(block);
 			block.sync();
+			this.blocks.add(block);
 		}
 		System.out.println("物理块初始化完成");
 		this.online = true;
-
+		
 		// 初始化位图
 		System.out.println("初始化位图");
 		byte[] bitMap = new byte[Config.BLOCK_COUNT / 8];
@@ -63,6 +65,7 @@ public class IO {
 				rootDirJSON.length() / 512 + 1, Config.SYS_BLOCK_COUNT, 2);
 		String rootDirFCBJSON = gson.toJson(rootDirFCB);
 		
+		// 保存根目录FCB以及根目录目录文件
 		this.write(rootDirFCB.blockId, 1, rootDirFCBJSON);
 		this.write(Config.SYS_BLOCK_COUNT, rootDirFCB.size, rootDirJSON);
 
