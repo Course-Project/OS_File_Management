@@ -1,6 +1,7 @@
 package controller;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 
 import model.sys.Config;
 import model.sys.Config.FILE_TYPE;
@@ -96,6 +97,7 @@ public class SystemCore {
 	 *            所更新的内容
 	 */
 	public void updateFile(FCB fcb, String content) {
+		fcb.updatedDate = new Date();
 		this.diskManager.io.write(fcb.dataStartBlockId, fcb.size, content);
 	}
 

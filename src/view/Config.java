@@ -10,9 +10,4 @@ public class Config {
 	public static final int FILE_ICON_SIZE = 80;
 	public static final int FILE_ICON_PANEL_SIZE = 100;
 
-	// Type
-	public static enum FILE_TYPE {
-		FILE, DIRECTORY
-	};
-
 }

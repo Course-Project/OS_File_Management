@@ -22,17 +22,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
-import view.Config.FILE_TYPE;
+import model.sys.FCB;
 
 // TODO - layout views
 /**
  * 
  * @author Tom Hu
- *
+ * 
  */
 public class MainView extends JFrame {
 
@@ -46,7 +45,7 @@ public class MainView extends JFrame {
 	public JPanel contentPanel;
 
 	// Constructor
-	public MainView() {
+	public MainView(FCB[] fcbDir) {
 		super();
 
 		// initialize
@@ -60,7 +59,7 @@ public class MainView extends JFrame {
 		// UI Methods
 		this.configureMenuBar();
 		this.configureToolPanel();
-		this.configureContentScrollPane();
+		this.configureContentScrollPane(fcbDir);
 
 		// Main View
 		this.configureJFrame();
@@ -89,7 +88,7 @@ public class MainView extends JFrame {
 		menuBar = new JMenuBar();
 
 		// Build Elevator Menu
-		elevatorMenu = new JMenu("Elevator");
+		elevatorMenu = new JMenu("File System");
 		elevatorMenu.setMnemonic(KeyEvent.VK_E);
 
 		// Add Menu Items to Menu "Elevator"
@@ -100,7 +99,7 @@ public class MainView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(EXIT_ON_CLOSE);
+				System.exit(DISPOSE_ON_CLOSE);
 			}
 
 		});
@@ -149,7 +148,9 @@ public class MainView extends JFrame {
 		this.add(toolPanel, BorderLayout.PAGE_START);
 	}
 
-	private void configureContentScrollPane() {
+	private void configureContentScrollPane(FCB[] fcbDir) {
+		// Clear all children components
+		this.contentPanel.removeAll();
 
 		// Set background color
 		this.contentPanel.setBackground(Color.WHITE);
@@ -192,43 +193,16 @@ public class MainView extends JFrame {
 		});
 
 		// For test
-		for (int i = 0; i < 60; i++) {
-			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.FILE,
-					"qwerwqerw");
-
-			System.out.println("Before adding: " + this.contentPanel.getSize());
-			System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
+		for (int i = 0; i < fcbDir.length; i++) {
+			if (fcbDir[i] == null) {
+				break;
+			}
+			
+			DocumentIconPanel t = new DocumentIconPanel(fcbDir[i].type,
+					fcbDir[i].filename);
 
 			this.contentPanel.add(t);
-//			this.contentPanel.setSize(this.contentPanel.getPreferredSize());
-			
-			System.out.println("After adding: " + this.contentPanel.getSize());
-			System.out.println("After adding: " + this.contentPanel.getPreferredSize());
 		}
-
-		for (int i = 0; i < 60; i++) {
-			DocumentIconPanel t = new DocumentIconPanel(FILE_TYPE.DIRECTORY,
-					"qwerwqerw");
-
-			System.out.println("Before adding: " + this.contentPanel.getSize());
-			System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
-
-			this.contentPanel.add(t);
-//			this.contentPanel.setSize(this.contentPanel.getPreferredSize());
-			
-			System.out.println("After adding: " + this.contentPanel.getSize());
-			System.out.println("After adding: " + this.contentPanel.getPreferredSize());
-		}
-
-		System.out.println("Before adding: " + this.contentPanel.getSize());
-		System.out.println("Before adding: " + this.contentPanel.getPreferredSize());
-
-		this.contentPanel.add(new DocumentIconPanel(FILE_TYPE.DIRECTORY,
-				"wqerytrqrhgfh"));
-//		this.contentPanel.setSize(this.contentPanel.getPreferredSize());
-		
-		System.out.println("After adding: " + this.contentPanel.getSize());
-		System.out.println("After adding: " + this.contentPanel.getPreferredSize());
 
 		// initialize content scroll pane
 		System.out.println("initialize contentScrollPane");
@@ -247,14 +221,15 @@ public class MainView extends JFrame {
 
 		// Show View
 		this.setVisible(true);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	// Actions
 	public void addDocument(DocumentIconPanel documentIconPanel) {
 		// For test
 		this.contentPanel.add(documentIconPanel);
-		this.contentPanel.validate();
+		this.contentPanel.revalidate();
 	}
 
 	public void addRightClickListener(MouseListener rightClickListener) {
@@ -275,5 +250,23 @@ public class MainView extends JFrame {
 			((DocumentIconPanel) item).setSelected(false);
 		}
 	}
+	
+	public void reloadContent(FCB[] fcbDir) {
+		// 移除所有components
+		this.contentPanel.removeAll();
+		
+		// 重新添加
+		for (int i = 0; i < fcbDir.length; i++) {
+			if (fcbDir[i] == null) {
+				break;
+			}
+			
+			DocumentIconPanel t = new DocumentIconPanel(fcbDir[i].type,
+					fcbDir[i].filename);
 
+			this.contentPanel.add(t);
+		}
+		
+		this.revalidate();
+	}
 }
