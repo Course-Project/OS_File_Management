@@ -37,11 +37,9 @@ public class MainView extends JFrame {
 
 	private static final long serialVersionUID = 6313156717813295316L;
 
-	public JButton backButton;
+	private JButton backButton;
 	public JTextField addressTextField;
 	public JButton goButton;
-	public JTextField searchTextField;
-	public JButton searchButton;
 	public JPanel contentPanel;
 
 	// Constructor
@@ -53,8 +51,6 @@ public class MainView extends JFrame {
 		this.backButton = new JButton("Back");
 		this.addressTextField = new JTextField("test");
 		this.goButton = new JButton("Go");
-		this.searchTextField = new JTextField("search");
-		this.searchButton = new JButton("search");
 
 		// UI Methods
 		this.configureMenuBar();
@@ -79,7 +75,7 @@ public class MainView extends JFrame {
 	private void configureMenuBar() {
 		// Components
 		JMenuBar menuBar;
-		JMenu elevatorMenu;
+		JMenu fileSystemMenu;
 		JMenu helpMenu;
 		JMenuItem elevatorMenuItem;
 		JMenuItem helpMenuItem;
@@ -88,8 +84,8 @@ public class MainView extends JFrame {
 		menuBar = new JMenuBar();
 
 		// Build Elevator Menu
-		elevatorMenu = new JMenu("File System");
-		elevatorMenu.setMnemonic(KeyEvent.VK_E);
+		fileSystemMenu = new JMenu("File System");
+		fileSystemMenu.setMnemonic(KeyEvent.VK_F);
 
 		// Add Menu Items to Menu "Elevator"
 		elevatorMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
@@ -103,7 +99,7 @@ public class MainView extends JFrame {
 			}
 
 		});
-		elevatorMenu.add(elevatorMenuItem);
+		fileSystemMenu.add(elevatorMenuItem);
 
 		// Build About Menu
 		helpMenu = new JMenu("Help");
@@ -119,7 +115,7 @@ public class MainView extends JFrame {
 		helpMenu.add(helpMenuItem);
 
 		// Add Menus "File" and "Help" to Menu Bar
-		menuBar.add(elevatorMenu);
+		menuBar.add(fileSystemMenu);
 		menuBar.add(helpMenu);
 
 		// Add Components
@@ -141,8 +137,6 @@ public class MainView extends JFrame {
 		toolPanel.add(this.backButton);
 		toolPanel.add(this.addressTextField);
 		toolPanel.add(this.goButton);
-		toolPanel.add(this.searchTextField);
-		toolPanel.add(this.searchButton);
 
 		// Add to mainView
 		this.add(toolPanel, BorderLayout.PAGE_START);
@@ -197,7 +191,7 @@ public class MainView extends JFrame {
 			if (fcbDir[i] == null) {
 				break;
 			}
-			
+
 			DocumentIconPanel t = new DocumentIconPanel(fcbDir[i].type,
 					fcbDir[i].filename);
 
@@ -221,7 +215,6 @@ public class MainView extends JFrame {
 
 		// Show View
 		this.setVisible(true);
-//		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
@@ -234,6 +227,14 @@ public class MainView extends JFrame {
 
 	public void addRightClickListener(MouseListener rightClickListener) {
 		this.contentPanel.addMouseListener(rightClickListener);
+	}
+
+	public void addBackButtonActionListener(ActionListener actionListener) {
+		this.backButton.addActionListener(actionListener);
+	}
+
+	public void addGoButtonActionListener(ActionListener actionListener) {
+		this.goButton.addActionListener(actionListener);
 	}
 
 	public void addDocumentIconPanelMouseListener(
@@ -250,23 +251,24 @@ public class MainView extends JFrame {
 			((DocumentIconPanel) item).setSelected(false);
 		}
 	}
-	
+
 	public void reloadContent(FCB[] fcbDir) {
 		// 移除所有components
 		this.contentPanel.removeAll();
-		
+
 		// 重新添加
 		for (int i = 0; i < fcbDir.length; i++) {
 			if (fcbDir[i] == null) {
 				break;
 			}
-			
+
 			DocumentIconPanel t = new DocumentIconPanel(fcbDir[i].type,
 					fcbDir[i].filename);
 
 			this.contentPanel.add(t);
 		}
-		
-		this.revalidate();
+
+		this.contentPanel.repaint();
+		this.contentPanel.revalidate();
 	}
 }

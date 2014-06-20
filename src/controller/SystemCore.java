@@ -102,6 +102,17 @@ public class SystemCore {
 	}
 
 	/**
+	 * 独处文件内容
+	 * 
+	 * @param fcb
+	 *            文件对应的FCB
+	 * @return 返回文件内容
+	 */
+	public String readFile(FCB fcb) {
+		return this.diskManager.readFile(fcb);
+	}
+
+	/**
 	 * 创建文件夹
 	 * 
 	 * @param filename
@@ -260,13 +271,14 @@ public class SystemCore {
 	 * 
 	 * @param dirname
 	 *            文件夹名
+	 * @return 是否进入成功
 	 */
-	public void enterDir(String dirname) {
+	public boolean enterDir(String dirname) {
 		FCB dirFCB = this.getFCB(dirname, FILE_TYPE.DIRECTORY);
 		if (dirFCB == null) {
 			// 所对应文件夹不存在
 			System.out.println("找不到该目录");
-			return;
+			return false;
 		}
 
 		Gson gson = new Gson();
@@ -281,16 +293,20 @@ public class SystemCore {
 
 		// 计算文件个数
 		this.countFiles();
+
+		return true;
 	}
 
 	/**
 	 * 返回上一级文件夹
+	 * 
+	 * @return 是否返回成功
 	 */
-	public void leaveDir() {
+	public boolean leaveDir() {
 		if (this.currentDirFCB.fatherBlockId == -1) {
 			// 根目录，无法返回
 			System.out.println("已经到根目录，不存在上级目录");
-			return;
+			return false;
 		}
 
 		Gson gson = new Gson();
@@ -314,6 +330,8 @@ public class SystemCore {
 
 		// 计算文件个数
 		this.countFiles();
+
+		return true;
 	}
 
 	/**
@@ -322,11 +340,14 @@ public class SystemCore {
 	 * @return
 	 */
 	public String getCurrentPath() {
+		if (this.currentDirFCB.fatherBlockId == -1) {
+			return "/";
+		}
 		return this.recursiveGetPath(this.currentDirFCB);
 	}
 
 	/**
-	 * 通过给定FCB，递归获取该FCB的路径
+	 * 通过给定FCB，递归向上获取该FCB的路径
 	 * 
 	 * @param fcb
 	 *            给定的FCB
@@ -338,8 +359,7 @@ public class SystemCore {
 		}
 
 		if (fcb.fatherBlockId == -1) {
-			// 是根目录
-			return "/" + fcb.filename;
+			return "";
 		}
 
 		Gson gson = new Gson();
@@ -407,7 +427,7 @@ public class SystemCore {
 	/**
 	 * 计算当前文件夹下的文件个数
 	 */
-	private void countFiles() {
+	public void countFiles() {
 		for (this.fileCount = 0; this.fileCount < this.currentDir.length; this.fileCount++) {
 			if (this.currentDir[this.fileCount] == null) {
 				break;

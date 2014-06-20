@@ -76,6 +76,7 @@ public class Block {
 			outputChannel = new FileOutputStream(binFile).getChannel();
 			this.binData.rewind();
 			outputChannel.write(this.binData);
+			this.binData.flip();
 			outputChannel.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -162,7 +162,8 @@ public class IO {
 
 		// 内容大小小于写入的块，将之后的块清空
 		while (i < startBlockId + length) {
-			this.blocks.get(i++).wipe();
+			this.blocks.get(i).wipe();
+			this.blocks.get(i++).getBinData().flip();
 		}
 	}
 
@@ -191,7 +192,8 @@ public class IO {
 
 		// 内容大小小于写入的块，将之后的块清空
 		while (i < startBlockId + length) {
-			this.blocks.get(i++).wipe();
+			this.blocks.get(i).wipe();
+			this.blocks.get(i++).getBinData().flip();
 		}
 	}
 }
