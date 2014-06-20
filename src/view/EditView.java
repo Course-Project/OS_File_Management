@@ -2,8 +2,6 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
@@ -11,7 +9,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -58,47 +55,28 @@ public class EditView extends JFrame implements DocumentListener {
 	private void configureMenuBar() {
 		// Components
 		JMenuBar menuBar;
-		JMenu elevatorMenu;
+		JMenu fileMenu;
 		JMenu helpMenu;
-		JMenuItem elevatorMenuItem;
 		JMenuItem helpMenuItem;
 
 		// Create the Menu Bar
 		menuBar = new JMenuBar();
 
-		// Build Elevator Menu
-		elevatorMenu = new JMenu("File System");
-		elevatorMenu.setMnemonic(KeyEvent.VK_E);
-
-		// Add Menu Items to Menu "Elevator"
-		elevatorMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
-		elevatorMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-				ActionEvent.CTRL_MASK));
-		elevatorMenuItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(DISPOSE_ON_CLOSE);
-			}
-
-		});
-		elevatorMenu.add(elevatorMenuItem);
-
+		// Build File Menu
+		fileMenu = new JMenu("Edit");
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		fileMenu.setEnabled(false);
+		
 		// Build About Menu
 		helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(KeyEvent.VK_H);
 
 		// Add Menu Items to Menu "About"
-		helpMenuItem = new JMenuItem("About", KeyEvent.VK_A);
-		helpMenu.add(helpMenuItem);
-
 		helpMenuItem = new JMenuItem("Help", KeyEvent.VK_H);
-		helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-				ActionEvent.CTRL_MASK));
 		helpMenu.add(helpMenuItem);
 
-		// Add Menus "File" and "Help" to Menu Bar
-		menuBar.add(elevatorMenu);
+		// Add Menus "File" to Menu Bar
+		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
 
 		// Add Components

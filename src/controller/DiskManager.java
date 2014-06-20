@@ -9,7 +9,7 @@ public class DiskManager {
 	
 	private byte[] bitMap;
 	public IO io;
-	private boolean online;
+	public boolean online;
 
 	/**
 	 * 构造函数
@@ -38,6 +38,20 @@ public class DiskManager {
 		this.bitMap = this.io.read(0, 2).array();
 		
 		this.online = true;
+	}
+	
+	/**
+	 * 格式化磁盘
+	 */
+	public void format() {
+		this.online = false;
+		this.io.online = false;
+		for (int i = 0; i < Config.BLOCK_COUNT; i++) {
+			this.io.write(i, 1, "");
+		}
+		
+		// 重新初始化位图以及根目录
+		this.io.initRootFile();
 	}
 	
 	/**

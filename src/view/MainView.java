@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -22,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import model.sys.FCB;
@@ -76,9 +74,8 @@ public class MainView extends JFrame {
 		// Components
 		JMenuBar menuBar;
 		JMenu fileSystemMenu;
-		JMenu helpMenu;
-		JMenuItem elevatorMenuItem;
-		JMenuItem helpMenuItem;
+		JMenu aboutMenu;
+		JMenuItem aboutMenuItem;
 
 		// Create the Menu Bar
 		menuBar = new JMenuBar();
@@ -86,37 +83,19 @@ public class MainView extends JFrame {
 		// Build Elevator Menu
 		fileSystemMenu = new JMenu("File System");
 		fileSystemMenu.setMnemonic(KeyEvent.VK_F);
-
-		// Add Menu Items to Menu "Elevator"
-		elevatorMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
-		elevatorMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-				ActionEvent.CTRL_MASK));
-		elevatorMenuItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(DISPOSE_ON_CLOSE);
-			}
-
-		});
-		fileSystemMenu.add(elevatorMenuItem);
+		fileSystemMenu.setEnabled(false);
 
 		// Build About Menu
-		helpMenu = new JMenu("Help");
-		helpMenu.setMnemonic(KeyEvent.VK_H);
+		aboutMenu = new JMenu("About");
+		aboutMenu.setMnemonic(KeyEvent.VK_A);
 
 		// Add Menu Items to Menu "About"
-		helpMenuItem = new JMenuItem("About", KeyEvent.VK_A);
-		helpMenu.add(helpMenuItem);
-
-		helpMenuItem = new JMenuItem("Help", KeyEvent.VK_H);
-		helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-				ActionEvent.CTRL_MASK));
-		helpMenu.add(helpMenuItem);
+		aboutMenuItem = new JMenuItem("About", KeyEvent.VK_A);
+		aboutMenu.add(aboutMenuItem);
 
 		// Add Menus "File" and "Help" to Menu Bar
 		menuBar.add(fileSystemMenu);
-		menuBar.add(helpMenu);
+		menuBar.add(aboutMenu);
 
 		// Add Components
 		this.setJMenuBar(menuBar);

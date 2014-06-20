@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -20,6 +19,8 @@ import model.sys.FCB;
 import view.DocumentIconPanel;
 import view.EditView;
 import view.MainView;
+
+import com.google.gson.Gson;
 
 /**
  * 
@@ -86,6 +87,24 @@ public class MainController {
 		this.view.showView();
 	}
 
+	/**
+	 * 显示编辑界面
+	 * 
+	 * @param fcb
+	 *            需要编辑的文件的FCB
+	 */
+	private void showEditView(FCB fcb) {
+		// 弹出Edit View，根据FCB加载
+		EditView editView = new EditView(fcb,
+				MainController.this.systemCore.readFile(fcb));
+
+		// 为Edit Window添加监听
+		editView.addWindowListener(MainController.this.editWindowListener);
+
+		// 显示Edit View
+		editView.setVisible(true);
+	}
+
 	// Listener
 	/**
 	 * 主界面内容面板右键点击监听
@@ -94,7 +113,6 @@ public class MainController {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 			// Deselect documents
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				MainController.this.view.deselectDocuments();
@@ -102,6 +120,8 @@ public class MainController {
 
 			// Popup menu
 			if (e.getButton() == MouseEvent.BUTTON3) {
+				boolean isRoot = (MainController.this.systemCore.currentDirFCB.fatherBlockId == -1);
+
 				JPopupMenu menu = new JPopupMenu();
 				JMenuItem newFileMenu = new JMenuItem("New File", KeyEvent.VK_N);
 				newFileMenu.setAccelerator(KeyStroke.getKeyStroke(
@@ -118,31 +138,36 @@ public class MainController {
 						.addActionListener(MainController.this.newFolderActionListener);
 				menu.add(newFolderMenu);
 
+				if (isRoot) {
+					menu.addSeparator();
+
+					JMenuItem formatMenu = new JMenuItem("Format");
+					formatMenu
+							.addActionListener(MainController.this.formatMenuActionListener);
+					menu.add(formatMenu);
+				}
+
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -155,15 +180,17 @@ public class MainController {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 			// Select current document
 			MainController.this.view.deselectDocuments();
-			((DocumentIconPanel) e.getComponent()).setSelected(true);
+			DocumentIconPanel d = (DocumentIconPanel) e.getComponent();
+			d.setSelected(true);
+
+			// 获取文件FCB
+			FCB fcb = MainController.this.systemCore.getFCB(d.getFilename(),
+					d.getType());
 
 			// Double click
 			if (e.getClickCount() == 2) {
-				DocumentIconPanel d = (DocumentIconPanel) e.getComponent();
-
 				// 判断双击的类型
 				if (d.getType() == FILE_TYPE.DIRECTORY) {
 					// 双击文件夹
@@ -175,19 +202,8 @@ public class MainController {
 
 				} else {
 					// 双击文件
-					// 获取文件FCB
-					FCB fcb = MainController.this.systemCore.getFCB(
-							d.getFilename(), FILE_TYPE.FILE);
-
-					// 弹出Edit View，根据FCB加载
-					EditView editView = new EditView(fcb,
-							MainController.this.systemCore.readFile(fcb));
-
-					// 为Edit Window添加监听
-					editView.addWindowListener(MainController.this.editWindowListener);
-
-					// 显示Edit View
-					editView.setVisible(true);
+					// 显示编辑窗口
+					MainController.this.showEditView(fcb);
 				}
 
 				System.out.println("Double Click");
@@ -197,25 +213,44 @@ public class MainController {
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				JPopupMenu documentMenu = new JPopupMenu();
 				JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
+				MainController.this.openMenuActionListener.fcb = fcb;
+				openMenuItem
+						.addActionListener(MainController.this.openMenuActionListener);
 				documentMenu.add(openMenuItem);
 
-				JMenuItem editMenuItem = new JMenuItem("Edit", KeyEvent.VK_E);
-				documentMenu.add(editMenuItem);
+				if (d.getType() == FILE_TYPE.FILE) {
+					JMenuItem editMenuItem = new JMenuItem("Edit",
+							KeyEvent.VK_E);
+					MainController.this.editMenuActionListener.fcb = fcb;
+					editMenuItem
+							.addActionListener(MainController.this.editMenuActionListener);
+					documentMenu.add(editMenuItem);
+				}
 
 				JMenuItem renameMenuItem = new JMenuItem("Rename",
 						KeyEvent.VK_R);
+				MainController.this.renameMenuActionListener.fcb = fcb;
+				renameMenuItem
+						.addActionListener(MainController.this.renameMenuActionListener);
 				documentMenu.add(renameMenuItem);
 
 				documentMenu.addSeparator();
 
 				JMenuItem getInfoMenuItem = new JMenuItem("Get info",
 						KeyEvent.VK_I);
+				MainController.this.getInfoMenuActionListener.fcb = fcb;
+				getInfoMenuItem
+						.addActionListener(MainController.this.getInfoMenuActionListener);
 				documentMenu.add(getInfoMenuItem);
 
 				documentMenu.addSeparator();
 
-				JMenuItem deleteAll = new JMenuItem("Delete", KeyEvent.VK_D);
-				documentMenu.add(deleteAll);
+				JMenuItem deleteMenuItem = new JMenuItem("Delete",
+						KeyEvent.VK_D);
+				MainController.this.deleteMenuActionListener.fcb = fcb;
+				deleteMenuItem
+						.addActionListener(MainController.this.deleteMenuActionListener);
+				documentMenu.add(deleteMenuItem);
 
 				documentMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -223,25 +258,21 @@ public class MainController {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -260,8 +291,13 @@ public class MainController {
 					MainController.this.view, "请输入文件夹名称:", "新建文件夹",
 					JOptionPane.INFORMATION_MESSAGE);
 
+			if (filename == null) {
+				// 用户取消
+				return;
+			}
+
 			// 不允许文件名为空
-			while (filename == null || filename.equals("")) {
+			while (filename.equals("")) {
 				filename = (String) JOptionPane.showInputDialog(null,
 						"文件夹名不允许为空！\n请输入文件夹名称:", "新建文件夹",
 						JOptionPane.WARNING_MESSAGE);
@@ -291,8 +327,13 @@ public class MainController {
 					MainController.this.view, "请输入文件夹名称:", "新建文件夹",
 					JOptionPane.INFORMATION_MESSAGE);
 
+			if (filename == null) {
+				// 用户取消
+				return;
+			}
+
 			// 不允许文件名为空
-			while (filename == null || filename.equals("")) {
+			while (filename.equals("")) {
 				filename = (String) JOptionPane.showInputDialog(
 						MainController.this.view, "文件夹名不允许为空！\n请输入文件夹名称:",
 						"新建文件夹", JOptionPane.WARNING_MESSAGE);
@@ -306,6 +347,164 @@ public class MainController {
 					filename);
 			d.addMouseListener(MainController.this.documentIconPanelMouseListener);
 			MainController.this.view.addDocument(d);
+		}
+
+	};
+
+	private class CustomActionListener implements ActionListener {
+		public FCB fcb = null;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	/**
+	 * "编辑"按钮按键监听
+	 */
+	private CustomActionListener editMenuActionListener = new CustomActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainController.this.showEditView(this.fcb);
+		}
+
+	};
+
+	/**
+	 * "打开"按钮按键监听
+	 */
+	private CustomActionListener openMenuActionListener = new CustomActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (this.fcb.type == FILE_TYPE.DIRECTORY) {
+				// model进入下一级文件夹
+				MainController.this.systemCore.enterDir(this.fcb.filename);
+
+				// 重绘view
+				MainController.this.refreshView();
+
+			} else {
+				// 显示编辑窗口
+				MainController.this.showEditView(fcb);
+			}
+		}
+
+	};
+
+	/**
+	 * "删除"按钮按键监听
+	 */
+	private CustomActionListener deleteMenuActionListener = new CustomActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// 获取用户的选择
+			int result = JOptionPane.showConfirmDialog(
+					MainController.this.view,
+					"Are you sure you want to permanently delete this item?",
+					"Delete", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (result == 0) {
+				// 确定删除
+				if (this.fcb.type == FILE_TYPE.DIRECTORY) {
+					// model删除文件夹
+					MainController.this.systemCore.deleteDir(this.fcb.filename);
+				} else {
+					// model删除文件
+					MainController.this.systemCore
+							.deleteFile(this.fcb.filename);
+				}
+
+				// 重绘view
+				MainController.this.refreshView();
+			}
+		}
+
+	};
+
+	/**
+	 * "重命名"按钮按键监听
+	 */
+	private CustomActionListener renameMenuActionListener = new CustomActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// 获取文件名
+			String filename = (String) JOptionPane.showInputDialog(
+					MainController.this.view, "Folder name:", "Rename",
+					JOptionPane.INFORMATION_MESSAGE, null, null,
+					this.fcb.filename);
+
+			if (filename == null) {
+				// 用户取消
+				return;
+			}
+
+			// 不允许文件名为空
+			while (filename.equals("")) {
+				filename = (String) JOptionPane.showInputDialog(
+						MainController.this.view, "Folder name:", "Rename",
+						JOptionPane.INFORMATION_MESSAGE, null, null,
+						this.fcb.filename);
+			}
+
+			this.fcb.filename = filename;
+
+			Gson gson = new Gson();
+
+			// 更新文件FCB
+			MainController.this.systemCore.updateFCB(this.fcb);
+
+			// 更新当前目录的目录文件
+			MainController.this.systemCore.updateFile(
+					MainController.this.systemCore.currentDirFCB,
+					gson.toJson(MainController.this.systemCore.currentDir));
+
+			// 刷新界面
+			MainController.this.refreshView();
+		}
+
+	};
+
+	/**
+	 * "格式化"按钮按键监听
+	 */
+	private ActionListener formatMenuActionListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// 获取用户的选择
+			int result = JOptionPane.showConfirmDialog(
+					MainController.this.view,
+					"All the data will be erased from the disk.\nAre you sure to FORMAT disk?", "FORMAT!!",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+			if (result == 0) {
+				// 确定格式化
+				MainController.this.systemCore.format();
+			}
+			
+			// 刷新界面
+			MainController.this.refreshView();
+		}
+
+	};
+
+	/**
+	 * "属性"按钮按键监听
+	 */
+	private CustomActionListener getInfoMenuActionListener = new CustomActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// 弹出详细信息框
+			JOptionPane.showMessageDialog(MainController.this.view,
+					MainController.this.systemCore.getFileInfo(this.fcb),
+					"Info", JOptionPane.PLAIN_MESSAGE);
 		}
 
 	};
@@ -436,13 +635,11 @@ public class MainController {
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -456,25 +653,21 @@ public class MainController {
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -487,16 +680,14 @@ public class MainController {
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 			EditView editView = (EditView) e.getComponent();
-			
+
 			if (!editView.edited) {
 				// 文本没有变化
 				return;
@@ -537,25 +728,21 @@ public class MainController {
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
 
 		}
 

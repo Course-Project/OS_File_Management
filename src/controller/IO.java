@@ -13,7 +13,7 @@ import model.sys.FCB;
 public class IO {
 
 	private Vector<Block> blocks = new Vector<Block>();
-	private boolean online = false;
+	public boolean online = false;
 
 	public IO() {
 		super();
@@ -53,6 +53,15 @@ public class IO {
 			return;
 		}
 		
+		// 初始化位图以及根目录
+		this.initRootFile();
+	}
+	
+	/**
+	 * 初始化位图以及根目录
+	 */
+	public void initRootFile() {
+
 		// 初始化位图
 		System.out.println("初始化位图...");
 		byte[] bitMap = new byte[Config.BLOCK_COUNT / 8];

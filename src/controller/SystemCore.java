@@ -24,6 +24,14 @@ public class SystemCore {
 		// TODO Auto-generated constructor stub
 		this.diskManager = new DiskManager();
 
+		// 初始化系统核心
+		this.init();
+	}
+	
+	/**
+	 * 初始化系统核心
+	 */
+	private void init() {
 		// 初始化
 		this.diskManager.init();
 
@@ -74,6 +82,9 @@ public class SystemCore {
 			this.currentDir[fileCount++] = fcb;
 
 			Gson gson = new Gson();
+			
+			// 更新目录FCB
+			this.updateFCB(this.currentDirFCB);
 
 			// 更新当前目录文件
 			this.updateFile(this.currentDirFCB, gson.toJson(this.currentDir));
@@ -97,7 +108,6 @@ public class SystemCore {
 	 *            所更新的内容
 	 */
 	public void updateFile(FCB fcb, String content) {
-		fcb.updatedDate = new Date();
 		this.diskManager.io.write(fcb.dataStartBlockId, fcb.size, content);
 	}
 
@@ -110,6 +120,23 @@ public class SystemCore {
 	 */
 	public String readFile(FCB fcb) {
 		return this.diskManager.readFile(fcb);
+	}
+	
+	/**
+	 * 获取格式化后的文件信息
+	 * @param fcb 指定的FCB
+	 * @return 格式化后的文件信息
+	 */
+	public String getFileInfo(FCB fcb) {
+		String result = "";
+		
+		result += ("Name: " + fcb.filename + "\n");
+		result += ("Type: " + (fcb.type == FILE_TYPE.FILE ? "file" : "directory") + "\n");
+		result += ("Path: " + this.getCurrentPath() + "\n");
+		result += ("Created: " + fcb.createdDate + "\n");
+		result += ("Updated: " + fcb.updatedDate);
+		
+		return result;
 	}
 
 	/**
@@ -141,6 +168,9 @@ public class SystemCore {
 			this.currentDir[fileCount++] = dirFcb;
 
 			Gson gson = new Gson();
+			
+			// 更新目录FCB
+			this.updateFCB(this.currentDirFCB);
 
 			// 更新当前目录文件
 			this.updateFile(this.currentDirFCB, gson.toJson(this.currentDir));
@@ -170,6 +200,9 @@ public class SystemCore {
 
 		// 删除对应的FCB
 		this.deleteFCB(fcb);
+		
+		// 更新目录FCB
+		this.updateFCB(this.currentDirFCB);
 
 		// 递归删除
 		this.recursiveDeleteDir(fcb);
@@ -228,6 +261,9 @@ public class SystemCore {
 
 		// 删除对应的FCB
 		this.deleteFCB(fcb);
+		
+		// 更新目录FCB
+		this.updateFCB(this.currentDirFCB);
 
 		// 释放空间
 		// 释放该FCB所在的块
@@ -371,6 +407,15 @@ public class SystemCore {
 
 		return this.recursiveGetPath(fatherFCB) + "/" + fcb.filename;
 	}
+	
+	/**
+	 * 格式化，清空所有数据
+	 */
+	public void format() {
+		this.diskManager.format();
+		
+		this.init();
+	}
 
 	/**
 	 * 退出系统核心
@@ -400,6 +445,19 @@ public class SystemCore {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * 更新所给的FCB
+	 * 
+	 * @param fcb 指定的FCB
+	 */
+	public void updateFCB(FCB fcb) {
+		fcb.updatedDate = new Date();
+		
+		Gson gson = new Gson();
+		
+		this.diskManager.io.write(fcb.blockId, 1, gson.toJson(fcb));
 	}
 
 	/**
