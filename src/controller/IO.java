@@ -28,26 +28,33 @@ public class IO {
 			return;
 		}
 
-		System.out.println("系统开始初始化");
+		System.out.println("系统开始初始化...");
 		File diskDir = new File("disk");
 		boolean diskDirExists = diskDir.exists();
 		if (!diskDirExists) {
-			System.out.println("物理磁盘上模拟信息不存在");
+			System.out.println("!!!物理磁盘上模拟信息不存在");
+			System.out.println("在物理磁盘上新建目录...");
 			diskDir.mkdirs();
+			System.out.println("...在物理磁盘上新建目录完成");
 		}
 
 		// 初始化物理块
-		System.out.println("初始化物理块");
+		System.out.println("初始化物理块...");
 		for (int i = 0; i < Config.BLOCK_COUNT; i++) {
 			Block block = new Block(i);
 			block.sync();
 			this.blocks.add(block);
 		}
-		System.out.println("物理块初始化完成");
+		System.out.println("...物理块初始化完成");
 		this.online = true;
 		
+		// 本地已有文件信息，无需初始化
+		if (diskDirExists) {
+			return;
+		}
+		
 		// 初始化位图
-		System.out.println("初始化位图");
+		System.out.println("初始化位图...");
 		byte[] bitMap = new byte[Config.BLOCK_COUNT / 8];
 		bitMap[0] = 0x07; // 00000111，0和1号块被位图占用，2号块被根目录FCB占用
 		bitMap[Config.SYS_BLOCK_COUNT / 8] |= (1 << (Config.SYS_BLOCK_COUNT % 8)); // 根目录的目录文件，放在256号块
@@ -57,36 +64,38 @@ public class IO {
 		// 初始化根目录
 		// 根目录FCB，放在2号块，占一个块
 		// 根目录目录文件，放在256号块
-		System.out.println("初始化根目录");
+		System.out.println("初始化根目录...");
 		FCB[] rootDir = new FCB[40];
 		String rootDirJSON = gson.toJson(rootDir);
 
 		FCB rootDirFCB = new FCB("root", -1, Config.FILE_TYPE.DIRECTORY,
-				rootDirJSON.length() / 512 + 1, Config.SYS_BLOCK_COUNT, 2);
+				Config.FILE_MAX_BLOCKS, Config.SYS_BLOCK_COUNT, 2);
 		String rootDirFCBJSON = gson.toJson(rootDirFCB);
 		
 		// 保存根目录FCB以及根目录目录文件
 		this.write(rootDirFCB.blockId, 1, rootDirFCBJSON);
 		this.write(Config.SYS_BLOCK_COUNT, rootDirFCB.size, rootDirJSON);
+		
+		System.out.println("...根目录初始化完成");
 
 		// 保存位图
 		this.write(0, bitMap.length / 512 + 1, bitMap);
-		System.out.println("位图初始化完成");
+		System.out.println("...位图初始化完成");
 
 		// 写回物理磁盘
 		this.update();
-		System.out.println("系统初始化完成");
+		System.out.println("...系统初始化完成");
 	}
 
 	/**
 	 * 将所有块的数据写回物理磁盘
 	 */
 	public void update() {
-		System.out.println("系统数据写回物理磁盘");
+		System.out.println("系统数据写回物理磁盘...");
 		for (int i = 0; i < Config.BLOCK_COUNT; i++) {
 			this.blocks.get(i).update();
 		}
-		System.out.println("系统数据保存完毕");
+		System.out.println("...系统数据保存完毕");
 	}
 
 	/**
@@ -117,6 +126,10 @@ public class IO {
 			// append
 			resultBuffer.put(currentBinDataBuffer.array(), 0,
 					currentBinDataBuffer.limit());
+			
+			if (currentBinDataBuffer.limit() < currentBinDataBuffer.capacity()) {
+				break;
+			}
 		}
 
 		resultBuffer.rewind();

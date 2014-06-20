@@ -41,13 +41,8 @@ public class SystemCore {
 				Config.CHARSET);
 		this.currentDir = gson.fromJson(currentDirJSON, FCB[].class);
 
-		for (int i = 0; i < this.currentDir.length; i++) {
-			if (this.currentDir[i] != null) {
-				fileCount++;
-			} else {
-				break;
-			}
-		}
+		// 计算文件个数
+		this.countFiles();
 	}
 
 	/**
@@ -121,7 +116,7 @@ public class SystemCore {
 
 		if (fcbBlockStart != 0 && fileDataBlockStart != 0) {
 			FCB dirFcb = new FCB(filename, this.currentDirFCB.blockId,
-					Config.FILE_TYPE.FILE, Config.FILE_MAX_BLOCKS,
+					Config.FILE_TYPE.DIRECTORY, Config.FILE_MAX_BLOCKS,
 					fileDataBlockStart, fcbBlockStart);
 			FCB[] dir = new FCB[40];
 
@@ -191,6 +186,7 @@ public class SystemCore {
 		// 遍历，删除
 		for (int i = 0; i < dir.length; i++) {
 			if (dir[i].type == FILE_TYPE.DIRECTORY) {
+				// 删除文件夹
 				// 递归调用
 				this.recursiveDeleteDir(dir[i]);
 			} else {
@@ -234,14 +230,14 @@ public class SystemCore {
 	 */
 	private void deleteFCB(FCB fcb) {
 		int i = 0;
-		for ( ; i < this.currentDir.length; i++) {
+		for (; i < this.currentDir.length; i++) {
 			if (this.currentDir[i].filename.equals(fcb.filename)
 					&& this.currentDir[i].type == fcb.type) {
 				this.currentDir[i] = null;
 				break;
 			}
 		}
-		
+
 		// 保持文件目录的连续
 		while (i < this.currentDir.length - 1) {
 			if (this.currentDir[i + 1] == null) {
@@ -250,11 +246,118 @@ public class SystemCore {
 			this.currentDir[i] = this.currentDir[i++];
 			this.currentDir[i] = null;
 		}
-		
+
 		Gson gson = new Gson();
-		
+
 		// 写回Block
 		this.updateFile(this.currentDirFCB, gson.toJson(this.currentDir));
+	}
+
+	/**
+	 * 进入下一级文件夹
+	 * 
+	 * @param dirname
+	 *            文件夹名
+	 */
+	public void enterDir(String dirname) {
+		FCB dirFCB = this.getFCB(dirname, FILE_TYPE.DIRECTORY);
+		if (dirFCB == null) {
+			// 所对应文件夹不存在
+			System.out.println("找不到该目录");
+			return;
+		}
+
+		Gson gson = new Gson();
+
+		// 替换currentDirFCB和currentDir
+		this.currentDirFCB = dirFCB;
+		ByteBuffer bf = this.diskManager.io.read(
+				this.currentDirFCB.dataStartBlockId, this.currentDirFCB.size);
+		String json = new String(bf.array(), Config.CHARSET);
+		FCB[] dir = gson.fromJson(json, FCB[].class);
+		this.currentDir = dir;
+
+		// 计算文件个数
+		this.countFiles();
+	}
+
+	/**
+	 * 返回上一级文件夹
+	 */
+	public void leaveDir() {
+		if (this.currentDirFCB.fatherBlockId == -1) {
+			// 根目录，无法返回
+			System.out.println("已经到根目录，不存在上级目录");
+			return;
+		}
+
+		Gson gson = new Gson();
+
+		// 获取上一级文件夹的FCB
+		ByteBuffer bf = this.diskManager.io.read(
+				this.currentDirFCB.fatherBlockId, 1);
+		FCB fcb = gson.fromJson(new String(bf.array(), Config.CHARSET),
+				FCB.class);
+
+		// 获取上一级文件夹的目录文件
+		// 即获取包含其目录下所有FCB的数组
+		ByteBuffer dirBf = this.diskManager.io.read(fcb.dataStartBlockId,
+				fcb.size);
+		FCB[] dir = gson.fromJson(new String(dirBf.array(), Config.CHARSET),
+				FCB[].class);
+
+		// 替换currentDirFCB和currentDir
+		this.currentDir = dir;
+		this.currentDirFCB = fcb;
+
+		// 计算文件个数
+		this.countFiles();
+	}
+
+	/**
+	 * 获取当前文件夹的路径
+	 * 
+	 * @return
+	 */
+	public String getCurrentPath() {
+		return this.recursiveGetPath(this.currentDirFCB);
+	}
+
+	/**
+	 * 通过给定FCB，递归获取该FCB的路径
+	 * 
+	 * @param fcb
+	 *            给定的FCB
+	 * @return 给定FCB的路径
+	 */
+	private String recursiveGetPath(FCB fcb) {
+		if (fcb.type != FILE_TYPE.DIRECTORY) {
+			return null;
+		}
+
+		if (fcb.fatherBlockId == -1) {
+			// 是根目录
+			return "/" + fcb.filename;
+		}
+
+		Gson gson = new Gson();
+
+		// 获取父亲的FCB
+		ByteBuffer fatherBf = this.diskManager.io.read(fcb.fatherBlockId, 1);
+		String fatherFCBJson = new String(fatherBf.array(), Config.CHARSET);
+		FCB fatherFCB = gson.fromJson(fatherFCBJson, FCB.class);
+
+		return this.recursiveGetPath(fatherFCB) + "/" + fcb.filename;
+	}
+
+	/**
+	 * 退出系统核心
+	 */
+	public void exit() {
+		System.out.println("准备退出系统...");
+		// 写回磁盘
+		this.diskManager.update();
+		System.out.println("退出");
 	}
 
 	/**
@@ -264,9 +367,12 @@ public class SystemCore {
 	 *            文件名
 	 * @return 找到的FCB
 	 */
-	private FCB getFCB(String filename, FILE_TYPE type) {
+	public FCB getFCB(String filename, FILE_TYPE type) {
 		for (int i = 0; i < this.currentDir.length; i++) {
-			if (this.currentDir[i].filename == filename
+			if (this.currentDir[i] == null) {
+				break;
+			}
+			if (this.currentDir[i].filename.equals(filename)
 					&& this.currentDir[i].type == type) {
 				return this.currentDir[i];
 			}
@@ -285,7 +391,10 @@ public class SystemCore {
 	 */
 	private boolean checkFilename(String filename, FILE_TYPE type) {
 		for (int i = 0; i < this.currentDir.length; i++) {
-			if (this.currentDir[i].filename == filename
+			if (this.currentDir[i] == null) {
+				break;
+			}
+			if (this.currentDir[i].filename.equals(filename)
 					&& this.currentDir[i].type == type) {
 				return false;
 			}
@@ -293,4 +402,14 @@ public class SystemCore {
 		return true;
 	}
 
+	/**
+	 * 计算当前文件夹下的文件个数
+	 */
+	private void countFiles() {
+		for (this.fileCount = 0; this.fileCount < this.currentDir.length; this.fileCount++) {
+			if (this.currentDir[this.fileCount] == null) {
+				break;
+			}
+		}
+	}
 }

@@ -2,7 +2,6 @@ import com.google.gson.Gson;
 
 import controller.SystemCore;
 
-
 /**
  * 
  * @author Tom Hu
@@ -17,16 +16,45 @@ public class Main {
 		// TODO Auto-generated method stub
 		// MainController mainController = new MainController();
 		// mainController.showMainView();
-		
+
+		Gson gson = new Gson();
+
+		// String json = "[null,null,null]";
+		//
+		// ByteBuffer bf = ByteBuffer.wrap(json.getBytes(Config.CHARSET));
+		//
+		// FCB[] test = gson.fromJson(new String(bf.array(), Config.CHARSET),
+		// FCB[].class);
+		//
+		// System.out.println(test);
+
 		SystemCore core = new SystemCore();
 		
-		core.createFile("dhe");
+		System.out.println(core.getCurrentPath());
+
+//		core.createFile("dhe");
+//
+//		core.updateFile(core.getFCB("dhe", FILE_TYPE.FILE), "DSFADSFAS");
+//
+//		core.createDir("new folder");
 		
-		System.out.println(core.currentDirFCB);
+		core.enterDir("new folder");
 		
-		Gson gson = new Gson();
+		System.out.println(core.getCurrentPath());
+
+//		core.createFile("hdhdh");
+//		
+//		core.createDir("tom hu");
 		
-		System.out.println(gson.toJson(core.currentDir[0]));
+		core.enterDir("tom hu");
+		
+		System.out.println(core.getCurrentPath());
+
+		core.leaveDir();
+		
+		System.out.println(core.getCurrentPath());
+
+		core.exit();
 
 	}
 

@@ -54,6 +54,7 @@ public class Block {
 		try {
 			inputChannel = new FileInputStream(binFile).getChannel();
 			inputChannel.read(this.binData);
+			this.binData.flip();
 			inputChannel.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

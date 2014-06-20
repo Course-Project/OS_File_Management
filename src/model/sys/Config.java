@@ -15,7 +15,7 @@ public class Config {
 
 	public static final int SYS_BLOCK_COUNT = 256;
 
-	public static final int FILE_MAX_BLOCKS = 5;
+	public static final int FILE_MAX_BLOCKS = 10;
 
 	public static enum FILE_TYPE {
 		FILE, DIRECTORY

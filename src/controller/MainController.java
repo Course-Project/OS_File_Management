@@ -17,11 +17,13 @@ import view.MainView;
 /**
  * 
  * @author Tom Hu
- *
+ * 
  */
 public class MainController {
 
 	private MainView view;
+
+	private SystemCore systemCore;
 
 	// Constructor
 	public MainController() {
@@ -30,6 +32,8 @@ public class MainController {
 		// UI Methods
 		this.configureMainView();
 
+		// Initialize systemCore
+		this.systemCore = new SystemCore();
 	}
 
 	// UI Methods
