@@ -1,4 +1,4 @@
-OS File Managment
+OS File Management
 =================
 
 同济大学软件学院2012级，胡圣托(1252960)
