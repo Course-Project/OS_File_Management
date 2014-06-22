@@ -41,7 +41,7 @@ OS File Managment
 ![New file](https://raw.githubusercontent.com/h1994st/OS_File_Managment/master/screenshot/main%20-%20new%20file.png)
 
 新建文件夹时出错
-![New folder error](https://github.com/h1994st/OS_File_Managment/blob/master/screenshot/main%20-%20new%20folder%20error.png)
+![New folder error](https://raw.githubusercontent.com/h1994st/OS_File_Managment/master/screenshot/main%20-%20new%20folder%20error.png)
 
 - 编辑界面
 
@@ -49,12 +49,13 @@ OS File Managment
 ![Edit](https://raw.githubusercontent.com/h1994st/OS_File_Managment/master/screenshot/edit.png)
 
 关闭编辑界面时，如果有更改过文件内容，弹出对话框询问是否保存
-![Edit](https://github.com/h1994st/OS_File_Managment/blob/master/screenshot/edit%20-%20before%20exiting.png)
+![Edit](https://raw.githubusercontent.com/h1994st/OS_File_Managment/master/screenshot/edit%20-%20before%20exiting.png)
 
 ## 程序结构
 
 本项目依照MVC的思想进行架构，各层次分明
 
+```
 src/
 ├── controller/
 │   ├── DiskManager.java
@@ -73,6 +74,7 @@ src/
     ├── DocumentIconPanel.java
     ├── EditView.java
     └── MainView.java
+```
 
 #### View
 
