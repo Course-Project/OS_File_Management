@@ -106,11 +106,17 @@ public class EditView extends JFrame implements DocumentListener {
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		this.edited = true;
+		
+		// 改变窗口标题
+		this.setTitle(this.dataFCB.filename + " - Edited");
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
 		this.edited = true;
+		
+		// 改变窗口标题
+		this.setTitle(this.dataFCB.filename + " - Edited");
 	}
 
 	@Override
