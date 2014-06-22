@@ -231,6 +231,11 @@ public class SystemCore {
 
 		// 遍历，删除
 		for (int i = 0; i < dir.length; i++) {
+			if (dir[i] == null) {
+				// 如果目录为空，直接跳出
+				break;
+			}
+			
 			if (dir[i].type == FILE_TYPE.DIRECTORY) {
 				// 删除文件夹
 				// 递归调用
@@ -292,7 +297,7 @@ public class SystemCore {
 			if (this.currentDir[i + 1] == null) {
 				break;
 			}
-			this.currentDir[i] = this.currentDir[i++];
+			this.currentDir[i] = this.currentDir[++i];
 			this.currentDir[i] = null;
 		}
 

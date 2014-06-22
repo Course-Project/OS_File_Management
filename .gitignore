@@ -60,3 +60,4 @@ hs_err_pid*
 # local virtual disk data
 disk/
 *.bin
+fileSystem.jar
