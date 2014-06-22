@@ -82,35 +82,35 @@ src/
 
 1. Config.java
 
-该文件与界面无关，主要定义了一些整个View中用到的一些公共的参数，比如窗口长宽、文件图标的大小等
+	该文件与界面无关，主要定义了一些整个View中用到的一些公共的参数，比如窗口长宽、文件图标的大小等
 
-```
-package view;
+	```
+	package view;
 
-public class Config {
+	public class Config {
 
-	// Window
-	public static final int WINDOW_WIDTH = 800;
-	public static final int WINDOW_HEIGHT = 600;
+		// Window
+		public static final int WINDOW_WIDTH = 800;
+		public static final int WINDOW_HEIGHT = 600;
 
-	// File icon
-	public static final int FILE_ICON_SIZE = 80;
-	public static final int FILE_ICON_PANEL_SIZE = 100;
+		// File icon
+		public static final int FILE_ICON_SIZE = 80;
+		public static final int FILE_ICON_PANEL_SIZE = 100;
 
-}
-```
+	}
+	```
 
 2. DocumentIconPanel.java
 
-该文件与文件的图标有关
+	该文件与文件的图标有关
 
 3. EditView.java
 
-该文件与文件的编辑界面有关，可以编辑文字
+	该文件与文件的编辑界面有关，可以编辑文字
 
 4. MainView.java
 
-该文件与程序主界面有关，展示当前目录的情况
+	该文件与程序主界面有关，展示当前目录的情况
 
 
 #### Model
@@ -119,37 +119,37 @@ public class Config {
 
 1. Config.java
 
-该文件同样定义了一些整个Model中用到的一些公共参数
+	该文件同样定义了一些整个Model中用到的一些公共参数
 
-```
-package model.sys;
+	```
+	package model.sys;
 
-import java.nio.charset.Charset;
+	import java.nio.charset.Charset;
 
-public class Config {
+	public class Config {
 
-	public static final int BLOCK_SIZE = 512;
-	public static final int BLOCK_COUNT = 8000;
+		public static final int BLOCK_SIZE = 512;
+		public static final int BLOCK_COUNT = 8000;
 
-	public static final int SYS_BLOCK_COUNT = 256;
+		public static final int SYS_BLOCK_COUNT = 256;
 
-	public static final int FILE_MAX_BLOCKS = 10;
+		public static final int FILE_MAX_BLOCKS = 10;
 
-	public static enum FILE_TYPE {
-		FILE, DIRECTORY
-	};
+		public static enum FILE_TYPE {
+			FILE, DIRECTORY
+		};
 
-	public static final Charset CHARSET = Charset.forName("UTF-8");
-}
-```
+		public static final Charset CHARSET = Charset.forName("UTF-8");
+	}
+	```
 
 2. Block.java
 
-该文件描述了磁盘中“物理块”的模型，它可以从真实物理磁盘中同步数据
+	该文件描述了磁盘中“物理块”的模型，它可以从真实物理磁盘中同步数据
 
 3. FCB.java
 
-该文件定义了文件系统中的文件控制块模型
+	该文件定义了文件系统中的文件控制块模型
 
 
 #### Controller
@@ -158,20 +158,19 @@ public class Config {
 
 1. DiskManager.java
 
-该部分负责磁盘的管理，请求、释放空间
+	该部分负责磁盘的管理，请求、释放空间
 
 2. IO.java
 
-该部分负责对磁盘的读写
+	该部分负责对磁盘的读写
 
 3. MainController.java
 
-该部分是项目中最主要的部分，负责Model与View的交流，通过Model的数据来填充View并展示给用户
+	该部分是项目中最主要的部分，负责Model与View的交流，通过Model的数据来填充View并展示给用户
 
 4. SystemCore.java
 
-该部分是文件系统的核心，负责创建文件、创建文件夹、删除文件、删除文件夹、读文件、更新文件、进入目录、离开目录、格式化等操作
-
+	该部分是文件系统的核心，负责创建文件、创建文件夹、删除文件、删除文件夹、读文件、更新文件、进入目录、离开目录、格式化等操作
 
 ## 实现思想
 
