@@ -27,7 +27,7 @@ public class SystemCore {
 		// 初始化系统核心
 		this.init();
 	}
-	
+
 	/**
 	 * 初始化系统核心
 	 */
@@ -59,10 +59,11 @@ public class SystemCore {
 	 * 
 	 * @param filename
 	 *            文件名
+	 * @return 是否创建成功
 	 */
-	public void createFile(String filename) {
+	public boolean createFile(String filename) {
 		if (!this.checkFilename(filename, FILE_TYPE.FILE)) {
-			return;
+			return false;
 		}
 
 		int fcbBlockStart = this.diskManager.getFreeSpace(1);
@@ -82,7 +83,7 @@ public class SystemCore {
 			this.currentDir[fileCount++] = fcb;
 
 			Gson gson = new Gson();
-			
+
 			// 更新目录FCB
 			this.updateFCB(this.currentDirFCB);
 
@@ -96,7 +97,11 @@ public class SystemCore {
 			this.updateFile(fcb, "");
 		} else {
 			System.out.println("空间不够");
+
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -121,21 +126,24 @@ public class SystemCore {
 	public String readFile(FCB fcb) {
 		return this.diskManager.readFile(fcb);
 	}
-	
+
 	/**
 	 * 获取格式化后的文件信息
-	 * @param fcb 指定的FCB
+	 * 
+	 * @param fcb
+	 *            指定的FCB
 	 * @return 格式化后的文件信息
 	 */
 	public String getFileInfo(FCB fcb) {
 		String result = "";
-		
+
 		result += ("Name: " + fcb.filename + "\n");
-		result += ("Type: " + (fcb.type == FILE_TYPE.FILE ? "file" : "directory") + "\n");
+		result += ("Type: "
+				+ (fcb.type == FILE_TYPE.FILE ? "file" : "directory") + "\n");
 		result += ("Path: " + this.getCurrentPath() + "\n");
 		result += ("Created: " + fcb.createdDate + "\n");
 		result += ("Updated: " + fcb.updatedDate);
-		
+
 		return result;
 	}
 
@@ -144,10 +152,12 @@ public class SystemCore {
 	 * 
 	 * @param filename
 	 *            文件夹名
+	 * @return 是否创建成功
 	 */
-	public void createDir(String filename) {
+	public boolean createDir(String filename) {
 		if (!this.checkFilename(filename, FILE_TYPE.DIRECTORY)) {
-			return;
+			// 有重名
+			return false;
 		}
 
 		int fcbBlockStart = this.diskManager.getFreeSpace(1);
@@ -168,7 +178,7 @@ public class SystemCore {
 			this.currentDir[fileCount++] = dirFcb;
 
 			Gson gson = new Gson();
-			
+
 			// 更新目录FCB
 			this.updateFCB(this.currentDirFCB);
 
@@ -182,7 +192,11 @@ public class SystemCore {
 			this.updateFile(dirFcb, gson.toJson(dir));
 		} else {
 			System.out.println("空间不够");
+
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -200,7 +214,7 @@ public class SystemCore {
 
 		// 删除对应的FCB
 		this.deleteFCB(fcb);
-		
+
 		// 更新目录FCB
 		this.updateFCB(this.currentDirFCB);
 
@@ -235,7 +249,7 @@ public class SystemCore {
 				// 如果目录为空，直接跳出
 				break;
 			}
-			
+
 			if (dir[i].type == FILE_TYPE.DIRECTORY) {
 				// 删除文件夹
 				// 递归调用
@@ -266,7 +280,7 @@ public class SystemCore {
 
 		// 删除对应的FCB
 		this.deleteFCB(fcb);
-		
+
 		// 更新目录FCB
 		this.updateFCB(this.currentDirFCB);
 
@@ -412,13 +426,13 @@ public class SystemCore {
 
 		return this.recursiveGetPath(fatherFCB) + "/" + fcb.filename;
 	}
-	
+
 	/**
 	 * 格式化，清空所有数据
 	 */
 	public void format() {
 		this.diskManager.format();
-		
+
 		this.init();
 	}
 
@@ -455,13 +469,14 @@ public class SystemCore {
 	/**
 	 * 更新所给的FCB
 	 * 
-	 * @param fcb 指定的FCB
+	 * @param fcb
+	 *            指定的FCB
 	 */
 	public void updateFCB(FCB fcb) {
 		fcb.updatedDate = new Date();
-		
+
 		Gson gson = new Gson();
-		
+
 		this.diskManager.io.write(fcb.blockId, 1, gson.toJson(fcb));
 	}
 

@@ -41,7 +41,7 @@ public class EditView extends JFrame implements DocumentListener {
 
 	// UI Method
 	private void configureJFrame() {
-		this.setTitle("Edit");// Set title
+		this.setTitle(this.dataFCB.filename + " - Edit");// Set title
 		this.setSize(Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT);// Set size of
 																// window
 		this.setResizable(false);// Can't change the size

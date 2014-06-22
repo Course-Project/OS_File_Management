@@ -288,7 +288,8 @@ public class MainController {
 			// 新建文件
 			// 获取文件名
 			String filename = (String) JOptionPane.showInputDialog(
-					MainController.this.view, "请输入文件夹名称:", "新建文件夹",
+					MainController.this.view,
+					"Please enter your new file's name:", "New file",
 					JOptionPane.INFORMATION_MESSAGE);
 
 			if (filename == null) {
@@ -298,19 +299,38 @@ public class MainController {
 
 			// 不允许文件名为空
 			while (filename.equals("")) {
-				filename = (String) JOptionPane.showInputDialog(null,
-						"文件夹名不允许为空！\n请输入文件夹名称:", "新建文件夹",
-						JOptionPane.WARNING_MESSAGE);
+				filename = (String) JOptionPane
+						.showInputDialog(
+								MainController.this.view,
+								"Filename cannot be empty! \nPlease enter your new file's name:",
+								"New file", JOptionPane.WARNING_MESSAGE);
+
+				if (filename == null) {
+					// 用户取消
+					return;
+				}
 			}
 
-			// 添加到model
-			MainController.this.systemCore.createFile(filename);
+			if (MainController.this.systemCore.createFile(filename)) {
+				// 添加到model成功，即创建文件成功
+				// 添加到view
+				DocumentIconPanel d = new DocumentIconPanel(FILE_TYPE.FILE,
+						filename);
+				d.addMouseListener(MainController.this.documentIconPanelMouseListener);
+				MainController.this.view.addDocument(d);
+			} else {
+				// 创建文件失败
+				// 可能是有重名，也可能空间不够
+				// 弹出错误信息框
+				JOptionPane
+						.showMessageDialog(
+								MainController.this.view,
+								"Two possible reasons:\n1. The name \""
+										+ filename
+										+ "\" is already taken. Please choose a different name.\n2. Not enough disk space available. Delete some files.",
+								"New file error", JOptionPane.ERROR_MESSAGE);
+			}
 
-			// 添加到view
-			DocumentIconPanel d = new DocumentIconPanel(FILE_TYPE.FILE,
-					filename);
-			d.addMouseListener(MainController.this.documentIconPanelMouseListener);
-			MainController.this.view.addDocument(d);
 		}
 	};
 
@@ -324,7 +344,8 @@ public class MainController {
 			// 新建文件夹
 			// 获取文件名
 			String filename = (String) JOptionPane.showInputDialog(
-					MainController.this.view, "请输入文件夹名称:", "新建文件夹",
+					MainController.this.view,
+					"Please enter your new folder's name:", "New folder",
 					JOptionPane.INFORMATION_MESSAGE);
 
 			if (filename == null) {
@@ -334,19 +355,38 @@ public class MainController {
 
 			// 不允许文件名为空
 			while (filename.equals("")) {
-				filename = (String) JOptionPane.showInputDialog(
-						MainController.this.view, "文件夹名不允许为空！\n请输入文件夹名称:",
-						"新建文件夹", JOptionPane.WARNING_MESSAGE);
+				filename = (String) JOptionPane
+						.showInputDialog(
+								MainController.this.view,
+								"Folder's name cannot be empty! \nPlease enter your new folder's name:",
+								"New folder", JOptionPane.WARNING_MESSAGE);
+
+				if (filename == null) {
+					// 用户取消
+					return;
+				}
 			}
 
-			// 添加到model
-			MainController.this.systemCore.createDir(filename);
+			if (MainController.this.systemCore.createDir(filename)) {
+				// 添加到model成功，即创建文件夹成功
+				// 添加到view
+				DocumentIconPanel d = new DocumentIconPanel(
+						FILE_TYPE.DIRECTORY, filename);
+				d.addMouseListener(MainController.this.documentIconPanelMouseListener);
+				MainController.this.view.addDocument(d);
+			} else {
+				// 创建文件夹失败
+				// 可能是有重名，也可能空间不够
+				// 弹出错误信息框
+				JOptionPane
+						.showMessageDialog(
+								MainController.this.view,
+								"Two possible reasons:\n1. The name \""
+										+ filename
+										+ "\" is already taken. Please choose a different name.\n2. Not enough disk space available. Delete some files.",
+								"New folder error", JOptionPane.ERROR_MESSAGE);
+			}
 
-			// 添加到view
-			DocumentIconPanel d = new DocumentIconPanel(FILE_TYPE.DIRECTORY,
-					filename);
-			d.addMouseListener(MainController.this.documentIconPanelMouseListener);
-			MainController.this.view.addDocument(d);
 		}
 
 	};
@@ -385,7 +425,6 @@ public class MainController {
 
 				// 重绘view
 				MainController.this.refreshView();
-
 			} else {
 				// 显示编辑窗口
 				MainController.this.showEditView(fcb);
@@ -478,16 +517,18 @@ public class MainController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// 获取用户的选择
-			int result = JOptionPane.showConfirmDialog(
-					MainController.this.view,
-					"All the data will be erased from the disk.\nAre you sure to FORMAT disk?", "FORMAT!!",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			int result = JOptionPane
+					.showConfirmDialog(
+							MainController.this.view,
+							"All the data will be erased from the disk.\nAre you sure to FORMAT disk?",
+							"FORMAT!!", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
 
 			if (result == 0) {
 				// 确定格式化
 				MainController.this.systemCore.format();
 			}
-			
+
 			// 刷新界面
 			MainController.this.refreshView();
 		}
