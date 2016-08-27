@@ -17,7 +17,6 @@ public class DiskManager {
 	 */
 	public DiskManager() {
 		super();
-		// TODO Auto-generated constructor stub
 		this.bitMap = new byte[Config.BLOCK_COUNT / 8];
 		this.io = new IO();
 		this.online = false;

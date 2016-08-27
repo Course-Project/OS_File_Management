@@ -21,7 +21,6 @@ public class SystemCore {
 	 */
 	public SystemCore() {
 		super();
-		// TODO Auto-generated constructor stub
 		this.diskManager = new DiskManager();
 
 		// 初始化系统核心

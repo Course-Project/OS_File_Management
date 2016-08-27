@@ -25,7 +25,6 @@ import javax.swing.ScrollPaneConstants;
 
 import model.sys.FCB;
 
-// TODO - layout views
 /**
  * 
  * @author Tom Hu
@@ -135,8 +134,6 @@ public class MainView extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				System.out.println("resize");
 
-				// TODO Auto-generated method stub
-
 				Dimension d = MainView.this.contentPanel.getPreferredSize();
 				int con = MainView.this.contentPanel.getComponents().length;
 				int col = Config.WINDOW_WIDTH
@@ -151,17 +148,14 @@ public class MainView extends JFrame {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
 			}
 		});
 

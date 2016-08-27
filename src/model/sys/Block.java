@@ -27,7 +27,6 @@ public class Block {
 	 */
 	public Block(int id) {
 		super();
-		// TODO Auto-generated constructor stub
 		this.id = id;
 		this.binData = ByteBuffer.allocate(Config.BLOCK_SIZE);
 		this.filePath = "disk/" + this.id + ".bin";
@@ -57,10 +56,8 @@ public class Block {
 			this.binData.flip();
 			inputChannel.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -79,10 +76,8 @@ public class Block {
 			this.binData.flip();
 			outputChannel.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
