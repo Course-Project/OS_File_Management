@@ -3,10 +3,6 @@ OS File Management
 
 程序打开时会有点慢，因为需要初始化并读取数据，请耐心等待
 
-另外，本项目中对中文支持不太好，在新建文件、新建文件夹、编辑文件的时候尽量使用英文
-
-Github地址：[h1994st](https://github.com/h1994st)/[OS_File_Management](https://github.com/h1994st/OS_File_Management)
-
 ## 目录
 
 - 项目简介
